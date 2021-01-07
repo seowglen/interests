@@ -38,7 +38,11 @@ router.post('/register', validInfo, async (req, res) => {
 
         //res.json(newUser.rows[0]);
 
-        //5. Generate our jwt token
+        //5. Create a new profile for the user with blank values
+
+        await pool.query("INSERT INTO profile (profile_id) VALUES ($1)", [newUser.rows[0].profile_id]);
+
+        //6. Generate our jwt token
 
         const token = jwtGenerator(newUser.rows[0].user_id);
 

@@ -17,6 +17,10 @@ app.use('/auth', require('./routes/auth'));
 
 app.use('/home', require('./routes/home'));
 
+// profile route
+
+app.use('/profile', require('./routes/profile'));
+
 app.listen(5000,  () => {
     console.log("Server has started on port 5000");
 });
