@@ -5,6 +5,7 @@ import {BrowserRouter as Router, Switch, Route, Redirect} from 'react-router-dom
 import Home from './Home';
 import Login from './Login';
 import Register from './Register';
+import Profile from './Profile';
 
 function App() {
 
@@ -28,6 +29,8 @@ function App() {
     }
   }
 
+  // this is a test
+
   useEffect(() =>  {
     isAuth()
   }, []);
@@ -39,6 +42,7 @@ function App() {
         <Route exact path='/login' render={props => !isAuthenticated ? <Login {...props} setAuth={setAuth}/> : <Redirect to='./home'/>}/>
         <Route exact path='/register' render={props => !isAuthenticated ? <Register {...props} setAuth={setAuth}/> : <Redirect to='./login'/>}/>
         <Route exact path='/home'render={props => isAuthenticated ? <Home {...props} setAuth={setAuth}/> : <Redirect to='./login' />}/>
+        <Route exact path='/profile' render={props => isAuthenticated ? <Profile {...props} setAuth={setAuth}/> : <Redirect to='./login'/>}/>
       </Switch>
     </Router>
   );

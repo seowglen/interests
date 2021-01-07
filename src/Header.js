@@ -6,9 +6,10 @@ import PeopleIcon from '@material-ui/icons/People';
 import ChatIcon from '@material-ui/icons/Chat';
 import { Avatar, IconButton } from '@material-ui/core';
 import ForumIcon from '@material-ui/icons/Forum';
-import NotificationsIcon from '@material-ui/icons/Notifications';
+// import NotificationsIcon from '@material-ui/icons/Notifications';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import GroupWorkIcon from '@material-ui/icons/GroupWork';
+import { Link } from 'react-router-dom';
 
 
 function Header(props) {
@@ -21,9 +22,11 @@ function Header(props) {
                 <img src={img} alt=""></img>
             </div>
             <div className="header__middle">
-                <div className="header__option header__option--active">
-                    <HomeIcon />
-                </div>
+                <div className={"header__option" + (props.currentPage === 'home' ? ' header__option--active' : '')}>
+                    <Link to='/home' style={{ textDecoration: 'none', color: 'gray' }}>
+                        <HomeIcon />
+                    </Link>
+                </div>                    
                 <div className="header__option">
                     <PeopleIcon />
                 </div>
@@ -38,20 +41,20 @@ function Header(props) {
                 </div>                
             </div>
             <div className="header__right">
-                <div className="header__option">
-                    <Avatar />
-                    <h4>{props.displayName}</h4>
-                </div>
+                <Link to="/profile" style={{ textDecoration: 'none', color: 'black' }}>
+                    <div className={"header__option" + (props.currentPage === 'profile' ? ' header__option--active' : '')}>
+                        <Avatar src={props.picture}/>
+                        <h4>{props.displayName}</h4>        
+                    </div>
+                </Link>
 
                 <IconButton>
-                    <NotificationsIcon/>
-                </IconButton>
-
-                <IconButton>
-                    <ExitToAppIcon />
+                    <div onClick={(e) => props.logout(e)}>
+                        <ExitToAppIcon />
+                    </div>
                 </IconButton>
             </div>
-        </div>
+        </div>        
     );
 }
 

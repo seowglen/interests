@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Header from './Header';
 
+
 const Home = ({ setAuth }) => {
 
     const [name, setName] = useState("");
@@ -31,9 +32,8 @@ const Home = ({ setAuth }) => {
 
     return (
         <div>
-            <Header displayName={name}/>
+            <Header displayName={name} setAuth={setAuth} logout={logout} currentPage='home'/>
             <h1>Welcome {name}</h1>
-            <button onClick={(e) => logout(e)}>Logout</button>
         </div>
         
     )
