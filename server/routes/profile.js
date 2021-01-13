@@ -79,4 +79,58 @@ router.post('/upload-image', upload.single('file'), async (req, res) => {
     }
 })
 
+router.post('/save-name', async (req, res) => {
+    try {
+
+        const jwtToken = req.header("token");
+
+        if (!jwtToken) {
+            return res.status(403).json("Not Authorized");
+        }
+
+        const payload = jwt.verify(jwtToken, process.env.jwtSecret);
+
+        const profile_id = await pool.query("SELECT (profile_id) FROM users WHERE user_id = $1", [
+            payload.user
+        ])
+
+        const name = await pool.query("UPDATE profile SET profile_name = ($1) WHERE profile_id = ($2)", [
+            req.body.name,
+            profile_id.rows[0].profile_id
+        ]);
+        res.json({ name });
+
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json("Server Error");
+    }
+})
+
+router.post('/save-info', async (req, res) => {
+    try {
+
+        const jwtToken = req.header("token");
+
+        if (!jwtToken) {
+            return res.status(403).json("Not Authorized");
+        }
+
+        const payload = jwt.verify(jwtToken, process.env.jwtSecret);
+
+        const profile_id = await pool.query("SELECT (profile_id) FROM users WHERE user_id = $1", [
+            payload.user
+        ])
+
+        const info = await pool.query("UPDATE profile SET profile_info = ($1) WHERE profile_id = ($2)", [
+            req.body.info,
+            profile_id.rows[0].profile_id
+        ]);
+        res.json({ info });
+
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json("Server Error");
+    }
+})
+
 module.exports = router;
