@@ -25,6 +25,10 @@ app.use('/profile', require('./routes/profile'));
 
 app.use('/friends', require('./routes/friends'));
 
+// profile card route
+
+app.use('/profileCard', require('./routes/profileCard'));
+
 app.listen(5000,  () => {
     console.log("Server has started on port 5000");
 });
