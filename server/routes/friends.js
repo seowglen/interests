@@ -14,8 +14,9 @@ router.get('/', authorization, async (req, res) => {
     try {
         const friends_profile_id = [];
 
-        const friends = await pool.query("SELECT friend_id FROM friends WHERE user_id = $1", [
-            req.user
+        const friends = await pool.query("SELECT friend_id FROM friends WHERE user_id = $1 AND request = $2", [
+            req.user,
+            "accepted"
         ]);
         
         for (var i = 0; i < friends.rows.length; i++) {
@@ -23,6 +24,20 @@ router.get('/', authorization, async (req, res) => {
                 friends.rows[i].friend_id
             ]);
             friends_profile_id.push(profile_id.rows[0].profile_id);
+        }
+
+        const friends_requests = [];
+
+        const requests = await pool.query("SELECT friend_id FROM friends WHERE user_id = $1 AND request = $2", [
+            req.user,
+            "receiver"
+        ]);
+
+        for (var i = 0; i < requests.rows.length; i++) {
+            var profile_id_request = await pool.query("SELECT profile_id FROM users WHERE user_id = $1", [
+                requests.rows[i].friend_id
+            ]);
+            friends_requests.push(profile_id_request.rows[0].profile_id);
         }
 
         const all_users = [];
@@ -35,9 +50,9 @@ router.get('/', authorization, async (req, res) => {
             all_users.push(profiles.rows[i].profile_id);
         }
 
-        const friends_to_consider = all_users.filter(x => !friends_profile_id.includes(x));
+        const friends_to_consider = all_users.filter(x => !friends_profile_id.includes(x)).filter(x => !friends_requests.includes(x));
 
-        res.json({ friends_profile_id, friends_to_consider });
+        res.json({ friends_requests, friends_profile_id, friends_to_consider });
 
     } catch (err) {
         console.error(err.message);
