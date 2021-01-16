@@ -25,7 +25,19 @@ router.get('/', authorization, async (req, res) => {
             friends_profile_id.push(profile_id.rows[0].profile_id);
         }
 
-        res.json({ friends_profile_id });
+        const all_users = [];
+
+        const profiles = await pool.query("SELECT profile_id FROM users WHERE user_id != $1", [
+            req.user
+        ]);
+
+        for (var i = 0; i < profiles.rows.length; i++) {
+            all_users.push(profiles.rows[i].profile_id);
+        }
+
+        const friends_to_consider = all_users.filter(x => !friends_profile_id.includes(x));
+
+        res.json({ friends_profile_id, friends_to_consider });
 
     } catch (err) {
         console.error(err.message);
