@@ -60,3 +60,66 @@
     background-color: #eff2f5;
     border-radius: 10px;
 }
+
+.post__comments {
+    border-top: 1px solid lightgray;
+}
+
+.inviteSender {
+    display: flex;
+    /* margin-top: 20px; */
+    flex-direction: column;
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0px 5px 7px -7px rgba(0, 0, 0, 0.75);
+    width: 60%;
+}
+
+.commentSender {
+    display: flex;
+    /* margin-top: 20px; */
+    flex-direction: column;
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0px 5px 7px -7px rgba(0, 0, 0, 0.75);
+    width: 100%;
+}
+
+.inviteSender__top {
+    display: flex;
+    border-bottom: 1px solid #eff2f5;
+    padding-bottom: 15px;
+    padding: 15px;
+}
+
+.inviteSender__top > form {
+    flex: 1;
+    display: flex;
+}
+
+.inviteSender__top > form > textarea {
+    outline-width: 0;
+    border: none;
+    padding: 5px 20px;
+    margin: 0 10px;
+    border-radius: 999px;
+    background-color: #eff2f2;
+    resize: none;
+    overflow: hidden;    
+}
+
+.inviteSender__top > form > button {
+    background-color: #E27B66;
+    border: none;
+    color: white;
+    padding: 0px 20px;
+    border-radius: 999px;
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: 700;
+    outline: none;
+}
+
+.inviteSender__input {
+    flex: 1;
+}

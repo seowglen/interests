@@ -9,6 +9,7 @@ const Home = ({ setAuth }) => {
     const [name, setName] = useState("");
     const [picture, setPicture] = useState(null);
     const [input, setInput] = useState('');
+    const [postIDs, setPostIDs] = useState([]);
 
     async function getName() {
         try {
@@ -25,6 +26,21 @@ const Home = ({ setAuth }) => {
             else {
                 setName(parseRes[1].profile_name);
             }
+        } catch (err) {
+            console.error(err.message);
+        }
+    }
+
+    async function getPostIDs() {
+        try {
+            const response = await fetch('http://localhost:5000/home/get-posts', {
+                method: "GET",
+                headers: {token: localStorage.token}
+            });
+            
+            const parseRes = await response.json();
+            setPostIDs(parseRes.post_id_arr);
+
         } catch (err) {
             console.error(err.message);
         }
@@ -60,6 +76,7 @@ const Home = ({ setAuth }) => {
     useEffect(() => {
         getName();
         getPhoto();
+        getPostIDs();
     }, []);
 
     return (
@@ -82,9 +99,9 @@ const Home = ({ setAuth }) => {
                         </form>
                     </div>
                 </div>
-                <Post />
-                <Post />
-                <Post />     
+                {postIDs.map(uid => (
+                    <Post id={uid} picture={picture} name={name}/>
+                ))}    
             </div>
         </div>
         

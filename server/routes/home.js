@@ -47,4 +47,28 @@ router.get('/get-photo', authorization, async (req, res) => {
     }
 });
 
+router.get('/get-posts', authorization, async (req, res) => {
+    try {
+        const post_id_arr = []
+        
+        // SELECT ALL POSTS FROM logged in user, and all posts from confirmed friends.
+        const post_ids = await pool.query(
+            "SELECT * FROM posts WHERE user_id = $1 UNION SELECT * FROM posts WHERE user_id IN (SELECT friend_id FROM friends WHERE user_id = $2 AND request = $3) ORDER BY time_stamp DESC", [
+            req.user,
+            req.user,
+            "accepted"
+        ]);
+
+        for (var i = 0; i < post_ids.rows.length; i++) {
+            post_id_arr.push(post_ids.rows[i].post_id)
+        }
+
+        res.json({ post_id_arr });
+
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json("Server Error");
+    }
+});
+
 module.exports = router;
