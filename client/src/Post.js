@@ -4,12 +4,14 @@ import { Avatar } from '@material-ui/core';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
 import Comment from './Comment';
+import { Link } from 'react-router-dom';
 
 
 const Post = (props) => {
 
     const [input, setInput] = useState('');
     const [comments, setComments] = useState([]);
+    const [likes, setLikes] = useState([]);
     const [userName, setUserName] = useState('');
     const [userPicture, setUserPicture] = useState(null);
     const [userProfileID, setUserProfileID] = useState('');
@@ -70,7 +72,49 @@ const Post = (props) => {
             setPost(parseRes.post);
             setUserProfileID(parseRes.profile_id);
             setComments(parseRes.comment_ids);
+            setLikes(parseRes.likes);
             // setInfo(parseRes.profile_info);
+        } catch (err) {
+            console.error(err.message);
+        }
+    }
+
+    async function createComment(id, data) {
+        try {
+            const response = await fetch('http://localhost:5000/comment/create-comment', {
+                method: "POST",
+                headers: {
+                    token: localStorage.token,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ 
+                    id: id,
+                    comment: data 
+                })
+            });
+
+            const parseRes = await response.json();
+            setComments([...comments, parseRes.new_comment_id.comment_id])
+        } catch (err) {
+            console.error(err.message);
+        }
+    }
+
+    async function createLike(data) {
+        try {
+            const response = await fetch('http://localhost:5000/post/create-like', {
+                method: "POST",
+                headers: {
+                    token: localStorage.token,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ 
+                    id: data
+                })
+            });
+
+            const parseRes = await response.json();
+            setLikes([...likes, parseRes.new_like_id.like_id])
         } catch (err) {
             console.error(err.message);
         }
@@ -84,7 +128,7 @@ const Post = (props) => {
 
     function handleSubmit(e) {
         e.preventDefault();
-        console.log(input);
+        createComment(props.id, input)
         // setComments([...comments, input]);
         setInput('');
     }
@@ -97,30 +141,48 @@ const Post = (props) => {
         }
     }
 
+    function handleLikeClick() {
+        createLike(props.id);
+    }
+
     return (
         <div className="post">
             <div className="post__top">
                 <Avatar src={userPicture} className="post__avatar"/>
                 <div className="post__topInfo">
-                    <h3>{userName}</h3>
+                    <Link to={{
+                        pathname: '/otherProfile',
+                        idProps: {
+                            id: userProfileID
+                        }
+                    }} style={{ textDecoration: 'none', color: 'black', fontWeight: 'bold'}}>
+                        {userName}
+                    </Link>
                     <p>{timeStamp}</p>
                 </div>
             </div>
             <div className="post__bottom">
                 <p>{post}</p>
             </div>
-            <div className="post__options">
-                <div className="post__option">
-                    <ThumbUpIcon />
-                    <p>Like</p>
+            <div>
+                <div className="post__details">
+                    <p className="align__left">{likes !== undefined ? likes.length : 0} likes</p>
+                    <p className="align__right">{comments !== undefined ? comments.length : 0} comments</p>
                 </div>
-                <div className="post__option" onClick={handleCommentClick}>
-                    <ChatBubbleOutlineIcon />
-                    <p>Comment</p>
+                <div className="post__options">
+                    <div className="post__option" onClick={handleLikeClick}>
+                        <ThumbUpIcon />
+                        <p>Like</p>
+                    </div>
+                    <div className="post__option" onClick={handleCommentClick}>
+                        <ChatBubbleOutlineIcon />
+                        <p>Comment</p>
+                    </div>
                 </div>
             </div>
+            
             <div className="post__comments" id={props.id} style={{display: "none"}}>
-                {comments.map(uid => <Comment id={uid}/>)}
+                {comments !== undefined ? comments.map(uid => <Comment id={uid}/>) : null}
                 <div className="commentSender">
                     <div className="inviteSender__top">
                         <Avatar src={props.picture}/>

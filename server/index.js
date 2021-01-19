@@ -37,6 +37,10 @@ app.use('/userProfile', require('./routes/userProfile'));
 
 app.use('/post', require('./routes/post'));
 
+// comment route
+
+app.use('/comment', require('./routes/comment'));
+
 app.listen(5000,  () => {
     console.log("Server has started on port 5000");
 });

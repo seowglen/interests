@@ -61,6 +61,23 @@ const Home = ({ setAuth }) => {
         }
     }
 
+    async function createPost(data) {
+        try {
+            const response = await fetch('http://localhost:5000/home/create-post', {
+                method: "POST",
+                headers: {
+                    token: localStorage.token,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ post: data })
+            });
+            const parseRes = await response.json();
+            setPostIDs([parseRes.new_post_id.post_id, ...postIDs])
+        } catch (err) {
+            console.error(err.message);
+        }
+    }
+
     const logout = (e) => {
         e.preventDefault();
         localStorage.removeItem("token");
@@ -69,7 +86,7 @@ const Home = ({ setAuth }) => {
 
     function handleSubmit(e) {
         e.preventDefault();
-        console.log(input);
+        createPost(input);
         setInput("");
     }
 
@@ -93,7 +110,7 @@ const Home = ({ setAuth }) => {
                                 className="inviteSender__input" 
                                 rows="1" 
                                 cols="50" 
-                                placeholder={`Write what's on your mind here, ${name}.`}
+                                placeholder={`Post an invite, or write what's on your mind here, ${name}.`}
                             ></textarea>
                             <button onClick={handleSubmit} type="submit">Submit</button>
                         </form>

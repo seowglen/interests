@@ -2,6 +2,9 @@ const router = require("express").Router();
 const pool = require('../db');
 const authorization = require('../middleware/authorization');
 const path = require('path');
+const jwtGenerator = require('../utils/jwtGenerator');
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
 router.get('/', authorization, async (req, res) => {
     try {
@@ -66,6 +69,32 @@ router.get('/get-posts', authorization, async (req, res) => {
         res.json({ post_id_arr });
 
     } catch (err) {
+        console.error(err.message);
+        res.status(500).json("Server Error");
+    }
+});
+
+router.post('/create-post', async (req, res) => {
+    try {
+        const jwtToken = req.header("token");
+
+        if (!jwtToken) {
+            return res.status(403).json("Not Authorized");
+        }
+
+        const payload = jwt.verify(jwtToken, process.env.jwtSecret);
+
+        const post_id = await pool.query(
+            "INSERT INTO posts (user_id, time_stamp, post) VALUES ($1, to_timestamp($2), $3) RETURNING post_id", [
+            payload.user,
+            (Date.now() / 1000.0),
+            req.body.post
+        ]);
+
+        const new_post_id = post_id.rows[0];
+        res.json({ new_post_id });
+
+    } catch (error) {
         console.error(err.message);
         res.status(500).json("Server Error");
     }

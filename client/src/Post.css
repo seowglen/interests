@@ -24,7 +24,7 @@
 .post__topInfo > p {
     font-size: small;
     color: gray;
-    margin-top: -12px;
+    margin-top: -1px;
 }
 
 .post__bottom {
@@ -59,6 +59,26 @@
 .post__option:hover {
     background-color: #eff2f5;
     border-radius: 10px;
+}
+
+.post__details {
+    padding-top: 10px;
+    border-top: 1px solid lightgray;
+    display: flex;
+    justify-content: space-between;
+    font-size: medium;
+    color: gray;
+    cursor: pointer;
+    /* padding: 15px; */
+    padding: 5px 25px;
+}
+
+.align__left {
+    float: left;
+}
+
+.align__right {
+    float: right;
 }
 
 .post__comments {
