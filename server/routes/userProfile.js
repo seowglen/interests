@@ -105,7 +105,7 @@ router.post('/reject', async (req, res) => {
     }
 });
 
-router.post('/send', async (req, res) => {
+router.post('/accept', async (req, res) => {
     try {
         const jwtToken = req.header("token");
 
@@ -119,16 +119,26 @@ router.post('/send', async (req, res) => {
             req.body.id
         ]);
 
+        await pool.query("DELETE FROM friends WHERE user_id = ($1) AND friend_id = ($2)", [
+            payload.user,
+            user_id_from_profile.rows[0].user_id
+        ]);
+
+        await pool.query("DELETE FROM friends WHERE user_id = ($1) AND friend_id = ($2)", [
+            user_id_from_profile.rows[0].user_id,
+            payload.user            
+        ]);
+
         await pool.query("INSERT INTO friends (user_id, friend_id, request) VALUES ($1, $2, $3)", [
             payload.user,
             user_id_from_profile.rows[0].user_id,
-            "sender"
+            "accepted"
         ]);
 
         await pool.query("INSERT INTO friends (user_id, friend_id, request) VALUES ($1, $2, $3)", [
             user_id_from_profile.rows[0].user_id,
             payload.user,
-            "receiver"            
+            "accepted"            
         ]);
 
         res.status(200).json("Sent Friend Request");
