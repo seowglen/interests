@@ -45,7 +45,8 @@ const Comment = (props) => {
             });
             
             const parseRes = await response.json();
-            setTimeStamp(parseRes.time_stamp);
+            const date = new Date(parseRes.time_stamp).toString();
+            setTimeStamp(date);
             setComment(parseRes.comment);
             setUserProfileID(parseRes.profile_id);
             setName(parseRes.profile_name);

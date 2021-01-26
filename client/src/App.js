@@ -8,6 +8,8 @@ import Register from './Register';
 import Profile from './Profile';
 import Friends from './Friends';
 import OtherProfile from './OtherProfile';
+import Groups from './Groups';
+import GroupProfile from './GroupProfile';
 
 function App() {
 
@@ -47,6 +49,8 @@ function App() {
         <Route exact path='/profile' render={props => isAuthenticated ? <Profile {...props} setAuth={setAuth}/> : <Redirect to='./login'/>}/>
         <Route exact path='/friends' render={props => isAuthenticated ? <Friends {...props} setAuth={setAuth}/> : <Redirect to='./login'/>}/>
         <Route exact path='/otherProfile' render={props => isAuthenticated ? <OtherProfile {...props} setAuth={setAuth}/> : <Redirect to='./login'/>}/>
+        <Route exact path='/groups' render={props => isAuthenticated ? <Groups {...props} setAuth={setAuth}/> : <Redirect to='./login'/>}/>
+        <Route exact path='/groupProfile' render={props => isAuthenticated ? <GroupProfile {...props} setAuth={setAuth}/> : <Redirect to='./login'/>}/>
       </Switch>
     </Router>
   );

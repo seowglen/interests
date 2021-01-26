@@ -32,8 +32,10 @@ function Header(props) {
                         <PeopleIcon />
                     </Link>
                 </div>
-                <div className="header__option">
-                    <GroupWorkIcon />
+                <div className={"header__option" + (props.currentPage === 'groups' ? ' header__option--active' : '')}>
+                    <Link to='/groups' style={{ textDecoration: 'none', color: 'gray' }}>
+                        <GroupWorkIcon />
+                    </Link>
                 </div>
                 <div className="header__option">
                     <ForumIcon />

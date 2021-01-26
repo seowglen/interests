@@ -41,6 +41,18 @@ app.use('/post', require('./routes/post'));
 
 app.use('/comment', require('./routes/comment'));
 
+// groups route
+
+app.use('/groups', require('./routes/groups'));
+
+// group card route
+
+app.use('/groupCard', require('./routes/groupCard'));
+
+// group profile route
+
+app.use('/groupProfile', require('./routes/groupProfile'));
+
 app.listen(5000,  () => {
     console.log("Server has started on port 5000");
 });

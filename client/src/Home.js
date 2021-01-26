@@ -10,6 +10,8 @@ const Home = ({ setAuth }) => {
     const [picture, setPicture] = useState(null);
     const [input, setInput] = useState('');
     const [postIDs, setPostIDs] = useState([]);
+    const [category, setCategory] = useState('Group Name:');
+    const arr = ["This string has 20 c", "This string has 20 c", "This string has 20 c"];
 
     async function getName() {
         try {
@@ -90,6 +92,11 @@ const Home = ({ setAuth }) => {
         setInput("");
     }
 
+    function handleCategoryChange(category) {
+        console.log(category)
+        setCategory(category);
+    }
+
     useEffect(() => {
         getName();
         getPhoto();
@@ -112,6 +119,13 @@ const Home = ({ setAuth }) => {
                                 cols="50" 
                                 placeholder={`Post an invite, or write what's on your mind here, ${name}.`}
                             ></textarea>
+                            
+                            <select value={category} onChange={e => handleCategoryChange(e.target.value)}>
+                                {arr.map(item => (
+                                    <option>{item}</option>
+                                ))}
+                            </select>
+                            
                             <button onClick={handleSubmit} type="submit">Submit</button>
                         </form>
                     </div>

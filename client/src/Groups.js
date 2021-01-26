@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import './Groups.css';
 import Header from './Header';
-import "./Friends.css";
 import { Grid, Avatar, Divider, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-// import img from './120814890_10218672723473169_5547970412948181102_o.jpg'
-import EditIcon from '@material-ui/icons/Edit';
-import IconButton from "@material-ui/core/IconButton";
-import ProfileCard from './ProfileCard';
+import GroupCard from './GroupCard';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -15,14 +12,13 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const Friends = ({ setAuth }) => {
+const Groups = ({ setAuth }) => {
 
     const classes = useStyles();
-    const [profileID, setProfileID] = useState([]);
-    const [otherProfileID, setOtherProfileID] = useState([]);
-    const [requestProfileID, setRequestProfileID] = useState([]);
     const [name, setName] = useState("");
     const [picture, setPicture] = useState(null);
+    const [groupID, setGroupID] = useState([]);
+    const [otherGroupID, setOtherGroupID] = useState([]);
 
     const logout = (e) => {
         e.preventDefault();
@@ -61,17 +57,16 @@ const Friends = ({ setAuth }) => {
         }
     }
 
-    async function getProfileIds() {
+    async function getGroupIds() {
         try {
-            const response = await fetch('http://localhost:5000/friends/', {
+            const response = await fetch('http://localhost:5000/groups/', {
                 method: "GET",
                 headers: {token: localStorage.token}
             });
             
             const parseRes = await response.json();
-            setProfileID(parseRes.friends_profile_id);
-            setOtherProfileID(parseRes.friends_to_consider);
-            setRequestProfileID(parseRes.friends_requests);            
+            setGroupID(parseRes.user_groups);
+            setOtherGroupID(parseRes.groups_to_consider);            
             // setPicture(parseRes.profile_picture);
         } catch (err) {
             console.error(err.message);
@@ -81,37 +76,27 @@ const Friends = ({ setAuth }) => {
     useEffect(() => {
         getDetails();
         getPhoto();
-        getProfileIds();
+        getGroupIds();
     }, []);
 
     return (
         <div>
-            <Header displayName={name} picture={picture} setAuth={setAuth} logout={logout} currentPage='friends'/>
-            {/* <h1>This is the Friends Page</h1> */}
-            <h3>Friend Requests:</h3>
-            <div className={classes.root}>
-                {/* <Typography variant="h5">Friend Requests:</Typography> */}
-                <Grid container spacing={3}>
-                    {requestProfileID.map(uid => (
-                        <ProfileCard id={uid}/>
-                    ))}
-                </Grid>
-            </div>
-            <h3>These are my friends:</h3>
+            <Header displayName={name} picture={picture} setAuth={setAuth} logout={logout} currentPage='groups'/>
+            <h3>These are my groups:</h3>
             <div className={classes.root}>
                 {/* <Typography variant="h5">My Friends:</Typography> */}
                 <Grid container spacing={3}>
-                    {profileID.map(uid => (
-                        <ProfileCard id={uid}/>
+                    {groupID.map(uid => (
+                        <GroupCard id={uid}/>
                     ))}
                 </Grid>
             </div>
-            <h3>Friends to consider:</h3>
+            <h3>Groups to consider:</h3>
             <div className={classes.root}>
                 {/* <Typography variant="h5">Friends To Consider:</Typography> */}
                 <Grid container spacing={3}>
-                    {otherProfileID.map(uid => (
-                        <ProfileCard id={uid}/>
+                    {otherGroupID.map(uid => (
+                        <GroupCard id={uid}/>
                     ))}
                 </Grid>
             </div>
@@ -119,4 +104,4 @@ const Friends = ({ setAuth }) => {
     );
 }
 
-export default Friends;
+export default Groups;

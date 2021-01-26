@@ -13,7 +13,7 @@ CREATE TABLE users (
 CREATE TABLE profile (
 	profile_id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
 	profile_name varchar(255),
-	profile_picture bytea,
+	profile_picture varchar(761),
 	profile_info varchar(3071)
 )
 
@@ -55,4 +55,19 @@ CREATE TABLE comments (
 	comment varchar(3071),
 	FOREIGN KEY (post_id) REFERENCES posts (post_id),
 	FOREIGN KEY (user_id) REFERENCES users (user_id)
+)
+
+CREATE TABLE groups(
+	group_id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+	group_name varchar(255),
+	group_picture varchar(761),
+	group_info varchar(3071)
+)
+
+CREATE TABLE user_group (
+	_id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+	user_id uuid NOT NULL,
+	group_id uuid NOT NULL,
+	FOREIGN KEY (user_id) REFERENCES users (user_id),
+	FOREIGN KEY (group_id) REFERENCES groups (group_id)
 )

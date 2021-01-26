@@ -68,7 +68,8 @@ const Post = (props) => {
             });
             
             const parseRes = await response.json();
-            setTimeStamp(parseRes.time_stamp);
+            const date = new Date(parseRes.time_stamp).toString();
+            setTimeStamp(date);
             setPost(parseRes.post);
             setUserProfileID(parseRes.profile_id);
             setComments(parseRes.comment_ids);
@@ -158,6 +159,7 @@ const Post = (props) => {
                     }} style={{ textDecoration: 'none', color: 'black', fontWeight: 'bold'}}>
                         {userName}
                     </Link>
+                    <p>Group Name</p>
                     <p>{timeStamp}</p>
                 </div>
             </div>
