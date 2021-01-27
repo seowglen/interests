@@ -51,6 +51,7 @@ const OtherProfile = (props) => {
   const [inputName, setInputName] = useState("");
   const [editInfo, setEditInfo] = useState(0);
   const [inputInfo, setInputInfo] = useState("");
+  const [groupJoined, setGroupJoined] = useState(null);
 
   const logout = (e) => {
     e.preventDefault();
@@ -105,6 +106,7 @@ const OtherProfile = (props) => {
       const parseRes = await response.json();
       setGroupName(parseRes.group_name);
       setGroupInfo(parseRes.group_info);
+      setGroupJoined(parseRes.group_joined);
       // setInfo(parseRes.profile_info);
     } catch (err) {
       console.error(err.message);
@@ -230,6 +232,44 @@ const OtherProfile = (props) => {
     }
   }
 
+  async function join(id) {
+    try {
+        const response = await fetch('http://localhost:5000/groupProfile/join-group', {
+            method: "POST",
+            headers: {
+                token: localStorage.token,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                id: id
+            })
+        });
+        const parseRes = await response.json();
+        setGroupJoined(true);
+    } catch (err) {
+        console.error(err.message);
+    }
+  }
+
+  async function leave(id) {
+    try {
+        const response = await fetch('http://localhost:5000/groupProfile/leave-group', {
+            method: "POST",
+            headers: {
+                token: localStorage.token,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                id: id
+            })
+        });
+        const parseRes = await response.json();
+        setGroupJoined(false);
+    } catch (err) {
+        console.error(err.message);
+    }
+  }
+
   useEffect(() => {
     getDetails();
     getPhoto();
@@ -248,6 +288,13 @@ const OtherProfile = (props) => {
         currentPage="asdf"
       />
       <div className="profile">
+        <div>
+            {groupJoined ? 
+                <Button onClick={() => leave(groupProfileID)}>Leave Group</Button>
+            :
+                <Button onClick={() => join(groupProfileID)}>Join Group</Button>
+            }
+        </div>
         <div className={classes.root}>
           {groupPicture ? (
             <Avatar src={groupPicture} className={classes.large} />

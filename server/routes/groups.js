@@ -76,4 +76,40 @@ router.get('/get-photo', authorization, async (req, res) => {
     }
 });
 
+router.post('/postName', async (req, res) => {
+    try {
+        const jwtToken = req.header("token");
+
+        if (!jwtToken) {
+            return res.status(403).json("Not Authorized");
+        }
+
+        const payload = jwt.verify(jwtToken, process.env.jwtSecret);
+
+        const group = await pool.query("SELECT * FROM groups WHERE group_name= $1", [
+            req.body.name
+        ]);
+
+        if (group.rows.length !== 0) {
+            var err = "Group already exists";
+            return res.json({err: err});
+        } else {
+            const group_id = await pool.query("INSERT INTO groups (group_name) VALUES ($1) RETURNING group_id", [
+                req.body.name
+            ]);
+
+            await pool.query("INSERT INTO user_group (user_id, group_id) VALUES ($1, $2)", [
+                payload.user,
+                group_id.rows[0].group_id
+            ]);
+             
+            res.json(group_id.rows[0])
+        }
+
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json("Server Error");
+    }
+})
+
 module.exports = router;

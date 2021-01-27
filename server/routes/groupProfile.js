@@ -24,6 +24,17 @@ router.post('/get-details', async (req, res) => {
             req.body.id
         ]);
 
+        const group_joined = await pool.query("SELECT * FROM user_group WHERE user_id = ($1) AND group_id = ($2)", [
+            payload.user,
+            req.body.id
+        ])
+
+        if (group_joined.rows.length === 0) {
+            group_profile.rows[0]["group_joined"] = false;
+        } else {
+            group_profile.rows[0]["group_joined"] = true;
+        }
+
         res.json(group_profile.rows[0]);
 
     } catch (err) {
@@ -134,6 +145,54 @@ router.post('/save-info', async (req, res) => {
             req.body.id
         ]);
         res.json({ info });
+
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json("Server Error");
+    }
+});
+
+router.post('/join-group', async (req, res) => {
+    try {
+
+        const jwtToken = req.header("token");
+
+        if (!jwtToken) {
+            return res.status(403).json("Not Authorized");
+        }
+
+        const payload = jwt.verify(jwtToken, process.env.jwtSecret);
+
+        const result = await pool.query("INSERT INTO user_group (user_id, group_id) VALUES ($1, $2)", [
+            payload.user,
+            req.body.id
+        ])
+
+        res.json({ result });
+
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json("Server Error");
+    }
+})
+
+router.post('/leave-group', async (req, res) => {
+    try {
+
+        const jwtToken = req.header("token");
+
+        if (!jwtToken) {
+            return res.status(403).json("Not Authorized");
+        }
+
+        const payload = jwt.verify(jwtToken, process.env.jwtSecret);
+
+        const result = await pool.query("DELETE FROM user_group WHERE user_id = ($1) AND group_id = ($2)", [
+            payload.user,
+            req.body.id
+        ])
+
+        res.json({ result });
 
     } catch (err) {
         console.error(err.message);
