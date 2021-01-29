@@ -40,6 +40,16 @@ router.get('/', authorization, async (req, res) => {
             friends_requests.push(profile_id_request.rows[0].profile_id);
         }
 
+        const user_same_group = [];
+
+        const same_group = await pool.query("SELECT profile_id FROM users WHERE user_id IN (SELECT user_id FROM user_group WHERE user_id != $1 AND group_id IN (SELECT group_id FROM user_group WHERE user_id = $1))", [
+            req.user
+        ])
+
+        for (var i = 0; i < same_group.rows.length; i++) {
+            user_same_group.push(same_group.rows[i].profile_id);
+        }
+
         const all_users = [];
 
         const profiles = await pool.query("SELECT profile_id FROM users WHERE user_id != $1", [
@@ -50,7 +60,11 @@ router.get('/', authorization, async (req, res) => {
             all_users.push(profiles.rows[i].profile_id);
         }
 
-        const friends_to_consider = all_users.filter(x => !friends_profile_id.includes(x)).filter(x => !friends_requests.includes(x));
+        // friends to consider
+        // 1. Filter out users who are not in the same group as user
+        // 2. Filter out friends of user
+        // 3. Filter out friend requests to user
+        const friends_to_consider = all_users.filter(x => user_same_group.includes(x)).filter(x => !friends_profile_id.includes(x)).filter(x => !friends_requests.includes(x));
 
         res.json({ friends_requests, friends_profile_id, friends_to_consider });
 

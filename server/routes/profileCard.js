@@ -24,7 +24,18 @@ router.post('/get-name', async (req, res) => {
             req.body.id
         ]);
 
-        res.json(profile_name.rows[0].profile_name);
+        const groups = await pool.query(
+            "SELECT * FROM (SELECT group_id FROM user_group WHERE user_id = $1) AS A INNER JOIN (SELECT group_id FROM user_group WHERE user_id IN (SELECT user_id FROM users WHERE profile_id = $2)) AS B ON A.group_id = B.group_id", [
+            payload.user,
+            req.body.id
+        ]);
+
+        const response = {
+            profile_name: profile_name.rows[0].profile_name,
+            number_groups: groups.rows.length
+        }
+
+        res.json(response);
         // const id = req.body.id;
         // res.json({ id });
 

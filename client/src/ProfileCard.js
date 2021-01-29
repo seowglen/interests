@@ -44,6 +44,7 @@ const ProfileCard = ({ id }) => {
 
     const classes = useStyles();
     const [name, setName] = useState("");
+    const [groups, setGroups] = useState(0);
     const [picture, setPicture] = useState(null);
 
     async function getName(id) {
@@ -59,7 +60,8 @@ const ProfileCard = ({ id }) => {
             
             const parseRes = await response.json();
             console.log(parseRes);
-            setName(parseRes);
+            setName(parseRes.profile_name);
+            setGroups(parseRes.number_groups);
             // setPicture(parseRes.profile_picture);
             // setInfo(parseRes.profile_info);
         } catch (err) {
@@ -98,7 +100,7 @@ const ProfileCard = ({ id }) => {
             </div>
             <Typography variant="h6" className={classes.profileName}>{name}</Typography>
             <div className={classes.otherName}>
-                <Typography variant="caption" color="textSecondary">Hello</Typography>
+                <Typography variant="caption" color="textSecondary">{groups} Mutual Groups</Typography>
             </div>
             <Button className={classes.profileButton} disableElevation variant="contained" size="small">
                 <Link to={{

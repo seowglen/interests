@@ -11,7 +11,7 @@ const Home = ({ setAuth }) => {
     const [input, setInput] = useState('');
     const [postIDs, setPostIDs] = useState([]);
     const [category, setCategory] = useState('Group Name:');
-    const arr = ["This string has 20 c", "This string has 20 c", "This string has 20 c"];
+    const [groupNames, setGroupNames] = useState([]);
 
     async function getName() {
         try {
@@ -121,7 +121,7 @@ const Home = ({ setAuth }) => {
                             ></textarea>
                             
                             <select value={category} onChange={e => handleCategoryChange(e.target.value)}>
-                                {arr.map(item => (
+                                {groupNames.map(item => (
                                     <option>{item}</option>
                                 ))}
                             </select>
