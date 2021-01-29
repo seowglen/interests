@@ -68,7 +68,7 @@ router.post('/get-post', async (req, res) => {
         const payload = jwt.verify(jwtToken, process.env.jwtSecret);
 
         const post = await pool.query(
-            "SELECT time_stamp, post FROM posts WHERE post_id = $1", [
+            "SELECT time_stamp, post, group_name FROM posts WHERE post_id = $1", [
             req.body.id
         ]);
 

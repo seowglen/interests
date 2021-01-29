@@ -10,7 +10,7 @@ const Home = ({ setAuth }) => {
     const [picture, setPicture] = useState(null);
     const [input, setInput] = useState('');
     const [postIDs, setPostIDs] = useState([]);
-    const [category, setCategory] = useState('Group Name:');
+    const [category, setCategory] = useState('');
     const [groupNames, setGroupNames] = useState([]);
 
     async function getName() {
@@ -28,6 +28,10 @@ const Home = ({ setAuth }) => {
             else {
                 setName(parseRes[1].profile_name);
             }
+
+            setGroupNames(parseRes[2].group_names);
+            setCategory(parseRes[2].group_names[0]);
+
         } catch (err) {
             console.error(err.message);
         }
@@ -41,7 +45,7 @@ const Home = ({ setAuth }) => {
             });
             
             const parseRes = await response.json();
-            setPostIDs(parseRes.post_id_arr);
+            setPostIDs(parseRes.arr);
 
         } catch (err) {
             console.error(err.message);
@@ -63,7 +67,7 @@ const Home = ({ setAuth }) => {
         }
     }
 
-    async function createPost(data) {
+    async function createPost(data, group_name) {
         try {
             const response = await fetch('http://localhost:5000/home/create-post', {
                 method: "POST",
@@ -71,7 +75,10 @@ const Home = ({ setAuth }) => {
                     token: localStorage.token,
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ post: data })
+                body: JSON.stringify({ 
+                    post: data,
+                    group: group_name 
+                })
             });
             const parseRes = await response.json();
             setPostIDs([parseRes.new_post_id.post_id, ...postIDs])
@@ -88,7 +95,7 @@ const Home = ({ setAuth }) => {
 
     function handleSubmit(e) {
         e.preventDefault();
-        createPost(input);
+        createPost(input, category);
         setInput("");
     }
 

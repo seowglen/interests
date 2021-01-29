@@ -17,6 +17,7 @@ const Post = (props) => {
     const [userProfileID, setUserProfileID] = useState('');
     const [timeStamp, setTimeStamp] = useState('');
     const [post, setPost] = useState('');
+    const [groupName, setGroupName] = useState('');
 
     async function getName(data) {
         try {
@@ -74,6 +75,7 @@ const Post = (props) => {
             setUserProfileID(parseRes.profile_id);
             setComments(parseRes.comment_ids);
             setLikes(parseRes.likes);
+            setGroupName(parseRes.group_name);
             // setInfo(parseRes.profile_info);
         } catch (err) {
             console.error(err.message);
@@ -159,7 +161,7 @@ const Post = (props) => {
                     }} style={{ textDecoration: 'none', color: 'black', fontWeight: 'bold'}}>
                         {userName}
                     </Link>
-                    <p>Group Name</p>
+                    <p>{groupName}</p>
                     <p>{timeStamp}</p>
                 </div>
             </div>

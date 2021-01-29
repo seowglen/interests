@@ -19,8 +19,19 @@ router.get('/', authorization, async (req, res) => {
             user.rows[0].profile_id
         ]);
 
+        const group_names = [];
+
+        const groups = await pool.query("SELECT group_name FROM groups WHERE group_id IN (SELECT group_id FROM user_group WHERE user_id = $1)", [
+            req.user
+        ])
+
+        for (var i = 0; i < groups.rows.length; i++) {
+            group_names.push(groups.rows[i].group_name);
+        }
+
         res_array.push(user.rows[0]);
         res_array.push(profile_id.rows[0]);
+        res_array.push({group_names: group_names});
         // res.json(user.rows[0]);
         res.json(res_array);
 
@@ -66,7 +77,21 @@ router.get('/get-posts', authorization, async (req, res) => {
             post_id_arr.push(post_ids.rows[i].post_id)
         }
 
-        res.json({ post_id_arr });
+        // SELECT ALL POSTS that are in the same group as the USER
+        const posts_same_group = [];
+
+        const posts_same_group_arr = await pool.query(
+            "SELECT * FROM posts WHERE group_name IN (SELECT group_name FROM groups WHERE group_id IN (SELECT group_id FROM user_group WHERE user_id = $1))",[
+            req.user
+        ]);
+
+        for (var i = 0; i < posts_same_group_arr.rows.length; i++) {
+            posts_same_group.push(posts_same_group_arr.rows[i].post_id)
+        }
+
+        const arr = post_id_arr.filter(x => posts_same_group.includes(x));
+
+        res.json({ arr });
 
     } catch (err) {
         console.error(err.message);
@@ -85,10 +110,11 @@ router.post('/create-post', async (req, res) => {
         const payload = jwt.verify(jwtToken, process.env.jwtSecret);
 
         const post_id = await pool.query(
-            "INSERT INTO posts (user_id, time_stamp, post) VALUES ($1, to_timestamp($2), $3) RETURNING post_id", [
+            "INSERT INTO posts (user_id, time_stamp, post, group_name) VALUES ($1, to_timestamp($2), $3, $4) RETURNING post_id", [
             payload.user,
             (Date.now() / 1000.0),
-            req.body.post
+            req.body.post,
+            req.body.group
         ]);
 
         const new_post_id = post_id.rows[0];
