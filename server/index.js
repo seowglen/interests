@@ -53,6 +53,25 @@ app.use('/groupCard', require('./routes/groupCard'));
 
 app.use('/groupProfile', require('./routes/groupProfile'));
 
-app.listen(5000,  () => {
+const server = app.listen(5000,  () => {
     console.log("Server has started on port 5000");
+});
+
+const io = require('socket.io')(server,  {
+    cors: {
+      origin: "http://localhost:3000",
+      credentials: true
+    }
+});
+
+io.on('connection', (socket) => {
+    console.log('We have a new connection!!!');
+
+    socket.on('join', (data) => {
+        console.log(data);
+    })
+
+    socket.on('disconnected', () => {
+        console.log('User had left!!!');
+    });
 });
