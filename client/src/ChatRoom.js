@@ -1,17 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client';
+import './ChatRoom.css';
+import ChatInfo from './ChatInfo';
+import ChatInput from './ChatInput';
+import ChatMessages from './ChatMessages';
+
+let socket;
+const ENDPOINT = 'localhost:5000';
 
 const ChatRoom = (props) => {
 
+    const [name, setName] = useState('')
     const [room, setRoom] = useState('');
-    const ENDPOINT = 'localhost:5000';
-
+    const [message, setMessage] = useState('');
+    const [messages, setMessages] = useState([]);
+    
+    //asdf
     useEffect(() => {
-        var socket = io(ENDPOINT, { transport : ['websocket'] });
-        
+        socket = io(ENDPOINT, { rememberTransport: false, transport : ['websocket'] });
+
+        setName(props.userName);
         setRoom(props.roomName);
         
-        socket.emit('join', {room: props.roomName});
+        socket.emit('join', {name: props.userName, room: props.roomName});
 
         return () => {
             socket.emit('disconnected');
@@ -19,10 +30,36 @@ const ChatRoom = (props) => {
         }
         //asdfasdfsda
 
-    }, [ENDPOINT, props.roomName]);
+    }, [ENDPOINT, props.userName, props.roomName]);
+
+    useEffect(() => {
+        socket.on('message', (message) => {
+            setMessages(messages => [...messages, message]);
+        })
+    }, []);
+
+    const sendMessage = (e) => {
+        e.preventDefault();
+        if (message) {
+            socket.emit('sendMessage', message);
+        }
+        setMessage('');
+    }
+
+    const exitChat = (e) => {
+        e.preventDefault();
+        props.toggleChat(false);
+    }
 
     return (
-        <h1>Chat Room Entered: {room}</h1>
+        <div className="outerContainer">
+            <div className="container">
+                <ChatInfo room={room} exitChat={exitChat}/>
+                <ChatMessages messages={messages} name={name}/>
+                {/* <input value={message} onChange={(e) => setMessage(e.target.value)} onKeyPress={e => e.key === 'Enter' ? sendMessage(e) : null}/> */}
+                <ChatInput message={message} setMessage={setMessage} sendMessage={sendMessage}/>
+            </div>
+        </div>
     )
 }
 
