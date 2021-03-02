@@ -24,6 +24,8 @@ const Chat = ({ setAuth }) => {
             
             const parseRes = await response.json();
             setUserName(parseRes.profile_name);
+            setGroups(parseRes.groups);
+            setRoom(parseRes.groups[0]);
             // setPicture(parseRes.profile_picture);
             // setInfo(parseRes.profile_info);
         } catch (err) {
@@ -61,6 +63,10 @@ const Chat = ({ setAuth }) => {
         toggleChat(true);
     }
 
+    function handleCategoryChange(room) {
+        setRoom(room);
+    }
+
     return (
         <div>
             <Header displayName={userName} picture={picture} setAuth={setAuth} logout={logout} currentPage='chat'/>
@@ -69,8 +75,15 @@ const Chat = ({ setAuth }) => {
                     {!toggle ? 
                         <div className="chatIntro">
                             <h1>This is the Chat page</h1>
-                            <div>
+                            {/* <div>
                                 <input placeholder="Room" className="joinInput" type="text" onChange={(e) => setRoom(e.target.value)} />
+                            </div> */}
+                            <div>
+                                <select className="categorySelect" value={room} onChange={e => handleCategoryChange(e.target.value)}>
+                                    {groups.map(item => (
+                                        <option>{item}</option>
+                                    ))}
+                                </select>
                             </div>
                             <button className="button mt-20" type="submit" onClick={handleClick}>Join Room</button>
                         </div>

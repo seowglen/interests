@@ -11,6 +11,7 @@ import OtherProfile from './OtherProfile';
 import Groups from './Groups';
 import GroupProfile from './GroupProfile';
 import Chat from './Chat';
+import Forum from './Forum';
 
 function App() {
 
@@ -53,6 +54,7 @@ function App() {
         <Route exact path='/groups' render={props => isAuthenticated ? <Groups {...props} setAuth={setAuth}/> : <Redirect to='./login'/>}/>
         <Route exact path='/groupProfile' render={props => isAuthenticated ? <GroupProfile {...props} setAuth={setAuth}/> : <Redirect to='./login'/>}/>
         <Route exact path='/chat' render={props => isAuthenticated ? <Chat {...props} setAuth={setAuth}/> : <Redirect to='./login'/>}/>
+        <Route exact path='/forum' render={props => isAuthenticated ? <Forum {...props} setAuth={setAuth}/> : <Redirect to='./login'/>}/>
       </Switch>
     </Router>
   );

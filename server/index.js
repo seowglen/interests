@@ -67,6 +67,10 @@ app.use('/groupProfile', require('./routes/groupProfile'));
 
 app.use('/chat', require('./routes/chat'));
 
+// forum route
+
+app.use('/forum', require('./routes/forum'));
+
 // SOCKET.IO
 
 // const io = require('socket.io')(server,  {

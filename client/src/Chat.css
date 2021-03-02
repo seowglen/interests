@@ -59,3 +59,8 @@
 .chatIntro {
   margin-top: 10%;
 }
+
+.categorySelect {
+  width: 40%;
+  padding: 10px 35px 10px 10px;
+}

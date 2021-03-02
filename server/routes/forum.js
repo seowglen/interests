@@ -19,19 +19,6 @@ router.get('/get-details', authorization, async (req, res) => {
         const profile = await pool.query("SELECT * FROM profile WHERE profile_id = $1", [
             profile_id.rows[0].profile_id
         ])
-
-        group_names = [];
-
-        const groups = await pool.query("SELECT group_name FROM groups WHERE group_id IN (SELECT group_id FROM user_group WHERE user_id = $1)", [
-            req.user
-        ])
-
-        for (var i = 0; i < groups.rows.length; i++) {
-            group_names.push(groups.rows[i].group_name);
-        }
-
-        profile.rows[0]["groups"] = group_names;
-
         res.json(profile.rows[0]);
 
     } catch (err) {
