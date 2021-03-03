@@ -9,13 +9,15 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import ForumPostPreview from './ForumPostPreview';
 
 const Forum = ({ setAuth }) => {
 
     const [name, setName] = useState('');
     const [picture, setPicture] = useState(null);
     const [title, setTitle] = useState('');
-
+    const [post, setPost] = useState('');
+    const [postIds, setPostIds] = useState([]);
     const [open, setOpen] = React.useState(false);
 
     const handleClickOpen = () => {
@@ -28,53 +30,8 @@ const Forum = ({ setAuth }) => {
 
     const handleCreate = () => {
         setOpen(false);
-        setPosts([
-            {
-                id: 123,
-                title: title,
-                user: "Glen Seow",
-                timestamp: "Sat Jan 30 2021 17:03:19 GMT+0800 (Singapore Standard Time)",
-                comment_count: 0,
-                view_count: 0
-            },
-            ...posts
-        ])
+        createPost(title, post)
     };
-
-    const [posts, setPosts] = useState([
-        {
-            id: 123,
-            title: "Finding new friends to play mahjong!",
-            user: "Bryan Lim",
-            timestamp: "Sat Jan 30 2021 17:03:19 GMT+0800 (Singapore Standard Time)",
-            comment_count: 10,
-            view_count: 34
-        },
-        {
-            id: 124,
-            title: "Hello everyone!",
-            user: "Glen Seow",
-            timestamp: "Sat Jan 30 2021 17:03:19 GMT+0800 (Singapore Standard Time)",
-            comment_count: 12,
-            view_count: 34
-        },
-        {
-            id: 125,
-            title: "Looking forward to meeting new people!",
-            user: "Austen Ng",
-            timestamp: "Sat Jan 30 2021 17:03:19 GMT+0800 (Singapore Standard Time)",
-            comment_count: 42,
-            view_count: 34
-        },
-        {
-            id: 126,
-            title: "Finding people with the same interests as me! Yay!",
-            user: "Shiva Guetta",
-            timestamp: "Sat Jan 30 2021 17:03:19 GMT+0800 (Singapore Standard Time)",
-            comment_count: 12,
-            view_count: 100
-        },
-    ])
 
     const logout = (e) => {
         e.preventDefault();
@@ -113,9 +70,44 @@ const Forum = ({ setAuth }) => {
         }
     }
 
+    async function getPostIDs() {
+        try {
+            const response = await fetch('http://localhost:5000/forum/get-ids', {
+                method: "GET",
+                headers: {token: localStorage.token}
+            });
+            
+            const parseRes = await response.json();
+            setPostIds(parseRes.forum_post_ids);
+        } catch (err) {
+            console.error(err.message);
+        }
+    }
+
+    async function createPost(title, post) {
+        try {
+            const response = await fetch('http://localhost:5000/forum/create-post', {
+                method: "POST",
+                headers: {
+                    token: localStorage.token,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ 
+                    title: title,
+                    post: post 
+                })
+            });
+            const parseRes = await response.json();
+            setPostIds([parseRes.new_post_id.forum_post_id, ...postIds])
+        } catch (err) {
+            console.error(err.message);
+        }
+    }
+
     useEffect(() => {
         getDetails();
         getPhoto();
+        getPostIDs();
     }, []);
 
     return(
@@ -153,6 +145,7 @@ const Forum = ({ setAuth }) => {
                         multiline
                         rows={4}
                         rowsMax={4}
+                        onChange={e => setPost(e.target.value)}
                     />
                     </DialogContent>
                     <DialogActions>
@@ -166,23 +159,8 @@ const Forum = ({ setAuth }) => {
                 </Dialog>
             </div>
             <div className="forumPost__group">
-                {posts.map(post => (
-                    <div className="forumPost">
-                        {/* <div className="forumPost__left"></div> */}
-                        <div className="forumPost__left">
-                            <Avatar />
-                        </div>
-                        <div className="forumPost__center">
-                            <h3>{post.title}</h3>
-                            <span className="forumPost__info">
-                                submitted by {post.user}, {post.timestamp}
-                            </span>
-                            <p>
-                                {post.view_count} views, {post.comment_count} comments
-                            </p>
-                        </div>
-                        {/* <div className="forumPost__right"></div> */}
-                    </div>
+                {postIds.map(uid => (
+                    <ForumPostPreview id={uid} />
                 ))}
             </div>
         </div>

@@ -33,11 +33,31 @@ CREATE TABLE posts (
 	FOREIGN KEY (user_id) REFERENCES users (user_id)
 )
 
-INSERT INTO posts (user_id, time_stamp, post)
-VALUES ('678fde77-6d41-4228-905d-0360ca10c922', to_timestamp(1610907548), 'Whats up fam boiisssss')
+CREATE TABLE forum_posts (
+	forum_post_id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+	user_id uuid NOT NULL,
+	forum_title varchar(3071),
+	forum_post varchar(3071),
+	view_count int,
+	time_stamp timestamp,
+	FOREIGN KEY (user_id) REFERENCES users (user_id)
+)
 
-INSERT INTO comments (post_id, user_id, time_stamp, comment)
-VALUES ('e6584f5e-6eb4-4321-b741-101406dec46d', '678fde77-6d41-4228-905d-0360ca10c922', to_timestamp(1610911433), 'Sell it for $1 and we good fam')
+CREATE TABLE forum_comments (
+	forum_comment_id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+	user_id uuid NOT NULL,
+	forum_post_id uuid NOT NULL,
+	time_stamp timestamp,
+	forum_comment varchar(3071),
+	FOREIGN KEY (user_id) REFERENCES users (user_id),
+	FOREIGN KEY (forum_post_id) REFERENCES forum_posts (forum_post_id)
+)
+
+-- INSERT INTO posts (user_id, time_stamp, post)
+-- VALUES ('678fde77-6d41-4228-905d-0360ca10c922', to_timestamp(1610907548), 'Whats up fam boiisssss')
+
+-- INSERT INTO comments (post_id, user_id, time_stamp, comment)
+-- VALUES ('e6584f5e-6eb4-4321-b741-101406dec46d', '678fde77-6d41-4228-905d-0360ca10c922', to_timestamp(1610911433), 'Sell it for $1 and we good fam')
 
 CREATE TABLE likes (
 	like_id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
