@@ -45,5 +45,13 @@ p.forumPost__info {
 
 .forumPost__left {
     padding: 0px 15px;
-    margin-bottom: 35px;
+    margin-bottom: 30px;
+}
+
+.createPost {
+    margin-top: 20px;
+}
+
+textarea {
+    border-radius: 0px;
 }
