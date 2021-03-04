@@ -153,4 +153,54 @@ router.post('/get-forum-details', async (req, res) => {
     }
 });
 
+router.post('/get-post-details', async (req, res) => {
+    try {
+        const jwtToken = req.header("token");
+
+        if (!jwtToken) {
+            return res.status(403).json("Not Authorized");
+        }
+
+        const payload = jwt.verify(jwtToken, process.env.jwtSecret);
+
+        const post = await pool.query(
+            "SELECT time_stamp, view_count, forum_title, forum_post FROM forum_posts WHERE forum_post_id = $1", [
+            req.body.id
+        ]);
+
+        var updated_view_count = post.rows[0]['view_count'] + 1;
+
+        await pool.query("UPDATE forum_posts SET view_count = $1 WHERE forum_post_id = $2", [
+            updated_view_count,
+            req.body.id
+        ])
+
+        const profile = await pool.query(
+            "SELECT profile_id, profile_name FROM profile WHERE profile_id IN (SELECT profile_id FROM users WHERE user_id IN (SELECT user_id FROM forum_posts WHERE forum_post_id = $1))", [
+            req.body.id
+        ]);
+
+        const comments = await pool.query("SELECT forum_comment_id FROM forum_comments WHERE forum_post_id = $1",[
+            req.body.id    
+        ]);
+
+        if (comments === null) {
+            post.rows[0]['comment_count'] = [];
+        } else {
+            const comment_ids = []
+            for (var i = 0; i < comments.rows.length; i++) {
+                comment_ids.push(comments.rows[i].forum_comment_id);
+            }
+            post.rows[0]['comment_ids'] = comment_ids;
+        }
+        post.rows[0]['profile_id'] = profile.rows[0].profile_id;
+        post.rows[0]['profile_name'] = profile.rows[0].profile_name;
+        res.json(post.rows[0]);
+
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json("Server Error");
+    }
+});
+
 module.exports = router;

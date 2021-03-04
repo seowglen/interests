@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Avatar, Grid } from '@material-ui/core';
 import './Forum.css';
+import { Link } from 'react-router-dom';
 
 const ForumPostPreview = ({ id }) => {
 
@@ -68,7 +69,16 @@ const ForumPostPreview = ({ id }) => {
                 <Avatar src={picture}/>
             </div>
             <div className="forumPost__center">
-                <h3>{title}</h3>
+                <h3>
+                <Link to={{
+                    pathname: '/forumPost',
+                    idProps: {
+                        id: postId
+                    }
+                }} style={{ textDecoration: 'none'}}>
+                    {title}
+                </Link>
+                </h3>
                 <span className="forumPost__info">
                     submitted by {user}, {timestamp}
                 </span>
