@@ -4,6 +4,7 @@ import './ChatRoom.css';
 import ChatInfo from './ChatInfo';
 import ChatInput from './ChatInput';
 import ChatMessages from './ChatMessages';
+import TextContainer from './TextContainer';
 
 let socket;
 const ENDPOINT = 'localhost:5000';
@@ -14,6 +15,7 @@ const ChatRoom = (props) => {
     const [room, setRoom] = useState('');
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
+    const [users, setUsers] = useState('');
     
     //asdf
     useEffect(() => {
@@ -36,6 +38,10 @@ const ChatRoom = (props) => {
         socket.on('message', (message) => {
             setMessages(messages => [...messages, message]);
         })
+
+        socket.on("roomData", ({ users }) => {
+            setUsers(users);
+        });
     }, []);
 
     const sendMessage = (e) => {
@@ -59,6 +65,7 @@ const ChatRoom = (props) => {
                 {/* <input value={message} onChange={(e) => setMessage(e.target.value)} onKeyPress={e => e.key === 'Enter' ? sendMessage(e) : null}/> */}
                 <ChatInput message={message} setMessage={setMessage} sendMessage={sendMessage}/>
             </div>
+            <TextContainer users={users}/>
         </div>
     )
 }

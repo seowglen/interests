@@ -74,7 +74,9 @@ const Chat = ({ setAuth }) => {
                 <div className="joinInnerContainer">
                     {!toggle ? 
                         <div className="chatIntro">
-                            <h1>This is the Chat page</h1>
+                            <h1>Welcome to the Chat page</h1>
+                            <p>Talk to people in your group in real-time here</p>
+                            <p>NOTE: We do not save any form of data posted in the chat.</p>
                             {/* <div>
                                 <input placeholder="Room" className="joinInput" type="text" onChange={(e) => setRoom(e.target.value)} />
                             </div> */}
