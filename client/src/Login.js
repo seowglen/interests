@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SignIn({ setAuth }) {
+export default function Login({ setAuth }) {
 
   const classes = useStyles();
   const [inputs, setInputs] = useState({
@@ -121,10 +121,10 @@ export default function SignIn({ setAuth }) {
             autoComplete="current-password"
             onChange={e => onChange(e)}
           />
-          <FormControlLabel
+          {/* <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
             label="Remember me"
-          />
+          /> */}
           <Button
             type="submit"
             fullWidth
@@ -135,14 +135,14 @@ export default function SignIn({ setAuth }) {
             Sign In
           </Button>
           <Grid container>
-            <Grid item xs>
+            {/* <Grid item xs>
               <Link href="#" variant="body2">
                 Forgot password?
               </Link>
-            </Grid>
+            </Grid> */}
             <Grid item>
-              <Link href="#" variant="body2">
-                {"Don't have an account? Sign Up"}
+              <Link href="/register" variant="body2">
+                {"Don't have an account? Register here"}
               </Link>
             </Grid>
           </Grid>
