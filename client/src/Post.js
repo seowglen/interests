@@ -18,6 +18,7 @@ const Post = (props) => {
     const [timeStamp, setTimeStamp] = useState('');
     const [post, setPost] = useState('');
     const [groupName, setGroupName] = useState('');
+    const [liked, setLiked] = useState(false);
 
     async function getName(data) {
         try {
@@ -75,6 +76,7 @@ const Post = (props) => {
             setUserProfileID(parseRes.profile_id);
             setComments(parseRes.comment_ids);
             setLikes(parseRes.likes);
+            setLiked(parseRes.liked);
             setGroupName(parseRes.group_name);
             // setInfo(parseRes.profile_info);
         } catch (err) {
@@ -117,7 +119,29 @@ const Post = (props) => {
             });
 
             const parseRes = await response.json();
-            setLikes([...likes, parseRes.new_like_id.like_id])
+            setLikes([...likes, parseRes.new_like_id.like_id]);
+            setLiked(true);
+        } catch (err) {
+            console.error(err.message);
+        }
+    }
+
+    async function createUnlike(data) {
+        try {
+            const response = await fetch('http://localhost:5000/post/create-unlike', {
+                method: "POST",
+                headers: {
+                    token: localStorage.token,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ 
+                    id: data
+                })
+            });
+
+            const parseRes = await response.json();
+            setLikes(parseRes.likes);
+            setLiked(false);
         } catch (err) {
             console.error(err.message);
         }
@@ -148,6 +172,10 @@ const Post = (props) => {
         createLike(props.id);
     }
 
+    function handleUnlikeClick() {
+        createUnlike(props.id);
+    }
+
     return (
         <div className="post">
             <div className="post__top">
@@ -171,13 +199,20 @@ const Post = (props) => {
             <div>
                 <div className="post__details">
                     <p className="align__left">{likes !== undefined ? likes.length : 0} likes</p>
-                    <p className="align__right">{comments !== undefined ? comments.length : 0} comments</p>
+                    <p className="align__right" onClick={handleCommentClick}>{comments !== undefined ? comments.length : 0} comments</p>
                 </div>
                 <div className="post__options">
-                    <div className="post__option" onClick={handleLikeClick}>
-                        <ThumbUpIcon />
-                        <p>Like</p>
-                    </div>
+                    {liked ?
+                        <div className="post__option" onClick={handleUnlikeClick}>
+                            <ThumbUpIcon style={{color: "#E27B66"}}/>
+                            <p style={{color: "#E27B66"}}>Liked</p>
+                        </div>
+                    :
+                        <div className="post__option" onClick={handleLikeClick}>
+                            <ThumbUpIcon />
+                            <p>Like</p>
+                        </div>
+                    }
                     <div className="post__option" onClick={handleCommentClick}>
                         <ChatBubbleOutlineIcon />
                         <p>Comment</p>

@@ -101,10 +101,17 @@ router.post('/get-post', async (req, res) => {
             post.rows[0]['likes'] = []
         } else {
             var likes = [];
+            var liked = false;
             for (var i=0; i<likes_num.rows.length; i++) {
                 likes.push(likes_num.rows[i].user_id)
             }
+
+            if (likes.includes(payload.user)) {
+                liked = true;
+            }
+
             post.rows[0]['likes'] = likes;
+            post.rows[0]['liked'] = liked;
         }
 
         post.rows[0]['profile_id'] = profile_id.rows[0].profile_id;
@@ -134,6 +141,46 @@ router.post('/create-like', async (req, res) => {
 
         const new_like_id = like_id.rows[0];
         res.json({ new_like_id });
+
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json("Server Error");
+    }
+});
+
+router.post('/create-unlike', async (req, res) => {
+    try {
+        const jwtToken = req.header("token");
+
+        if (!jwtToken) {
+            return res.status(403).json("Not Authorized");
+        }
+
+        const payload = jwt.verify(jwtToken, process.env.jwtSecret);
+
+        await pool.query(
+            "DELETE FROM likes WHERE post_id = ($1) AND user_id = ($2)", [
+            req.body.id,
+            payload.user
+        ]);
+
+        const likes_num = await pool.query(
+            "SELECT user_id FROM likes WHERE post_id = ($1)", [
+            req.body.id,
+        ]);
+
+        var res_likes = {}
+
+        if (likes_num.rows === undefined) {
+            res_likes['likes'] = []
+        } else {
+            var likes = [];
+            for (var i=0; i<likes_num.rows.length; i++) {
+                likes.push(likes_num.rows[i].user_id)
+            }
+            res_likes['likes'] = likes;
+        }
+        res.json(res_likes);
 
     } catch (err) {
         console.error(err.message);
