@@ -1,0 +1,11 @@
+.friends__bar {
+    display: flex;
+    flex: 1;
+    justify-content: space-evenly;
+    padding: 25px 0px
+}
+
+.button__active {
+    background-color: #E27B66;
+    color: white;
+}

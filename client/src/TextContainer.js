@@ -17,7 +17,7 @@ const TextContainer = ({ users }) => (
           <div>
             <div className="infoBar">
                 <div className="leftInnerContainer">
-                    <h3>Users Online</h3>
+                    <h3>Users Chatting</h3>
                 </div>
             </div>
             <div className="activeContainer">

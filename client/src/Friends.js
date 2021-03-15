@@ -7,12 +7,21 @@ import { makeStyles } from '@material-ui/core/styles';
 import EditIcon from '@material-ui/icons/Edit';
 import IconButton from "@material-ui/core/IconButton";
 import ProfileCard from './ProfileCard';
+import Button from '@material-ui/core/Button';
 
 const useStyles = makeStyles(theme => ({
     root: {
         paddingLeft: theme.spacing(5),
         paddingRight: theme.spacing(5)
-    }
+    },
+    active: {
+        backgroundColor: "#E27B66",
+        color: "white",
+        "&:hover": {
+            backgroundColor: "#E27B66",
+            color: "white"
+        }
+    },
 }));
 
 const Friends = ({ setAuth }) => {
@@ -23,6 +32,9 @@ const Friends = ({ setAuth }) => {
     const [requestProfileID, setRequestProfileID] = useState([]);
     const [name, setName] = useState("");
     const [picture, setPicture] = useState(null);
+    const [toggleRequest, setToggleRequest] = useState(false);
+    const [toggleList, setToggleList] = useState(false);
+    const [toggleConsider, setToggleConsider] = useState(false);
 
     const logout = (e) => {
         e.preventDefault();
@@ -78,43 +90,83 @@ const Friends = ({ setAuth }) => {
         }
     }
 
+    function handleRequests() {
+        setToggleRequest(true);
+        setToggleList(false);
+        setToggleConsider(false);
+    }
+
+    function handleList() {
+        setToggleRequest(false);
+        setToggleList(true);
+        setToggleConsider(false);
+    }
+
+    function handleConsider() {
+        setToggleRequest(false);
+        setToggleList(false);
+        setToggleConsider(true);
+    }
+
     useEffect(() => {
         getDetails();
         getPhoto();
         getProfileIds();
+        setToggleList(true);
     }, []);
 
     return (
         <div>
             <Header displayName={name} picture={picture} setAuth={setAuth} logout={logout} currentPage='friends'/>
             {/* <h1>This is the Friends Page</h1> */}
-            <h3>Friend Requests:</h3>
-            <div className={classes.root}>
-                {/* <Typography variant="h5">Friend Requests:</Typography> */}
-                <Grid container spacing={3}>
-                    {requestProfileID.map(uid => (
-                        <ProfileCard id={uid}/>
-                    ))}
-                </Grid>
+            <div className="friends__bar">
+                <Button variant="contained" className={(toggleRequest ? classes.active : '')} onClick={() => handleRequests()}>
+                    Friend Requests ({requestProfileID.length})
+                </Button>
+                <Button variant="contained" className={(toggleList ? classes.active : '')} onClick={() => handleList()}>
+                    Friends List ({profileID.length})
+                </Button>
+                <Button variant="contained" className={(toggleConsider ? classes.active : '')} onClick={() => handleConsider()}>
+                    Friends To Consider ({otherProfileID.length})
+                </Button>
             </div>
-            <h3>These are my friends:</h3>
-            <div className={classes.root}>
-                {/* <Typography variant="h5">My Friends:</Typography> */}
-                <Grid container spacing={3}>
-                    {profileID.map(uid => (
-                        <ProfileCard id={uid}/>
-                    ))}
-                </Grid>
-            </div>
-            <h3>Friends to consider:</h3>
-            <div className={classes.root}>
-                {/* <Typography variant="h5">Friends To Consider:</Typography> */}
-                <Grid container spacing={3}>
-                    {otherProfileID.map(uid => (
-                        <ProfileCard id={uid}/>
-                    ))}
-                </Grid>
-            </div>
+
+            {toggleRequest ? 
+                <div className={classes.root}>
+                    {/* <Typography variant="h5">Friend Requests:</Typography> */}
+                    <Grid container spacing={3}>
+                        {requestProfileID.map(uid => (
+                            <ProfileCard id={uid}/>
+                        ))}
+                    </Grid>
+                </div>
+            : null
+            }
+            
+            {toggleList ?
+                <div className={classes.root}>
+                    {/* <Typography variant="h5">My Friends:</Typography> */}
+                    <Grid container spacing={3}>
+                        {profileID.map(uid => (
+                            <ProfileCard id={uid}/>
+                        ))}
+                    </Grid>
+                </div>
+            : 
+                null
+            }
+            
+            {toggleConsider ?
+                <div className={classes.root}>
+                    {/* <Typography variant="h5">Friends To Consider:</Typography> */}
+                    <Grid container spacing={3}>
+                        {otherProfileID.map(uid => (
+                            <ProfileCard id={uid}/>
+                        ))}
+                    </Grid>
+                </div>
+            : null
+            }    
         </div>
     );
 }
