@@ -188,4 +188,38 @@ router.post('/create-unlike', async (req, res) => {
     }
 });
 
+router.post('/get-likes-names', async (req, res) => {
+    try {
+        const jwtToken = req.header("token");
+
+        if (!jwtToken) {
+            return res.status(403).json("Not Authorized");
+        }
+
+        const payload = jwt.verify(jwtToken, process.env.jwtSecret);
+
+        const likes_users = await pool.query(
+            "SELECT profile_name FROM profile WHERE profile_id IN (SELECT profile_id FROM users WHERE user_id IN (SELECT user_id FROM likes WHERE post_id = $1))", [
+            req.body.id
+        ])
+
+        var res_likes_names = {}
+
+        if (likes_users.rows === undefined) {
+            res_likes_names['likes_names'] = []
+        } else {
+            var likes_names = [];
+            for (var i=0; i<likes_users.rows.length; i++) {
+                likes_names.push(likes_users.rows[i].profile_name)
+            }
+            res_likes_names['likes_names'] = likes_names;
+        }
+        res.json(res_likes_names);
+
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json("Server Error");
+    }
+});
+
 module.exports = router;

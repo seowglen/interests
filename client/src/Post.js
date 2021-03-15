@@ -5,6 +5,13 @@ import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
 import Comment from './Comment';
 import { Link } from 'react-router-dom';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 
 const Post = (props) => {
@@ -19,6 +26,17 @@ const Post = (props) => {
     const [post, setPost] = useState('');
     const [groupName, setGroupName] = useState('');
     const [liked, setLiked] = useState(false);
+    const [open, setOpen] = React.useState(false);
+    const [likesNames, setLikesNames] = useState([]);
+
+    const handleClickOpen = () => {
+        setOpen(true);
+        getLikesNames(props.id);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
 
     async function getName(data) {
         try {
@@ -147,6 +165,26 @@ const Post = (props) => {
         }
     }
 
+    async function getLikesNames(data) {
+        try {
+            const response = await fetch('http://localhost:5000/post/get-likes-names', {
+                method: "POST",
+                headers: {
+                    token: localStorage.token,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ 
+                    id: data
+                })
+            });
+
+            const parseRes = await response.json();
+            setLikesNames(parseRes.likes_names);
+        } catch (err) {
+            console.error(err.message);
+        }
+    }
+
     useEffect(() => {
         getName(props.id);
         getPhoto(props.id);
@@ -198,7 +236,22 @@ const Post = (props) => {
             </div>
             <div>
                 <div className="post__details">
-                    <p className="align__left">{likes !== undefined ? likes.length : 0} likes</p>
+                    <p className="align__left" onClick={handleClickOpen}>{likes !== undefined ? likes.length : 0} likes</p>
+                    <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+                        <DialogTitle id="form-dialog-title">People who liked this post</DialogTitle>
+                        <DialogContent>
+                            {likesNames.map(names => (
+                                <DialogContentText>
+                                    {names}
+                                </DialogContentText>
+                            ))}
+                        </DialogContent>
+                        <DialogActions>
+                        <Button onClick={handleClose} color="primary">
+                            Cancel
+                        </Button>
+                        </DialogActions>
+                    </Dialog>
                     <p className="align__right" onClick={handleCommentClick}>{comments !== undefined ? comments.length : 0} comments</p>
                 </div>
                 <div className="post__options">
