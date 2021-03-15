@@ -34,3 +34,10 @@
     background-color: #f7196e;
     color: white;
 }
+
+.login__form {
+    width: 100%;
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+}
