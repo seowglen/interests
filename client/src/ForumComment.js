@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './ForumComment.css';
 import { Avatar } from "@material-ui/core";
+import { Divider } from '@material-ui/core';
 
 const ForumComment = (props) => {
 
@@ -70,6 +71,9 @@ const ForumComment = (props) => {
                     <pre>
                         {props.comment.forum_comment}
                     </pre>
+                    <p>
+                        reply
+                    </p>
                 </div>
                 {/* <div className="forumPost__right"></div> */}
             </div>

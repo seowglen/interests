@@ -12,15 +12,14 @@
 .forumComment__center {
     width: 100%;
     margin-bottom: 2px;
-    padding: 0px 15px;
 }
 
 .forumComment__center > h3 {
     font-weight: 600;
     font-size: medium;
     color: #464855;
-    padding: 5px 0;
     margin-bottom: 0px;
+    margin-top: auto;
 }
 
 .forumComment__center >  .forumComment__info {
@@ -38,9 +37,12 @@ p.forumComment__info {
 
 .forumComment__left {
     padding: 0px 15px;
-    margin-bottom: 30px;
+    margin-bottom: auto;
+    display: flex;
+    flex-direction: column;
 }
 
 textarea {
     border-radius: 0px;
 }
+
