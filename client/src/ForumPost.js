@@ -133,7 +133,7 @@ const ForumPost = (props) => {
                     <span className="forumPost__info">
                         submitted by {user}, {timestamp}
                     </span>
-                    <pre>
+                    <pre className="forumPost__post">
                         {post}
                     </pre>
                 </div>

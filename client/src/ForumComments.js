@@ -9,6 +9,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import ForumComment from './ForumComment';
+import ReplyComment from './ReplyComment';
 
 const ForumComments = (props) => {
 
@@ -58,7 +59,12 @@ const ForumComments = (props) => {
             <div className="createComment">
 
                 {props.comments && props.comments.map((comment) => (
-                    <ForumComment comment={comment} id={props.id} updateComment={props.updateComment}/>
+                    (!comment.parent_comment_id &&
+                        <div>
+                            <ForumComment comment={comment} id={props.id} updateComment={props.updateComment}/>
+                            <ReplyComment comments={props.comments} id={props.id} parentCommentId={comment.forum_comment_id} updateComment={props.updateComment}/>
+                        </div>
+                    )
                 ))}
 
                 <Grid container justify="center">

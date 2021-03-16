@@ -277,4 +277,32 @@ router.post('/get-comment-photo', async (req, res) => {
     }
 });
 
+router.post('/create-reply', async (req, res) => {
+    try {
+        const jwtToken = req.header("token");
+
+        if (!jwtToken) {
+            return res.status(403).json("Not Authorized");
+        }
+
+        const payload = jwt.verify(jwtToken, process.env.jwtSecret);
+
+        const comment_id = await pool.query(
+            "INSERT INTO forum_comments (user_id, time_stamp, forum_post_id, forum_comment, parent_comment_id) VALUES ($1, to_timestamp($2), $3, $4, $5) RETURNING *", [
+            payload.user,
+            (Date.now() / 1000.0),
+            req.body.post_id,
+            req.body.reply,
+            req.body.comment_id
+        ]);
+
+        const new_comment_id = comment_id.rows[0];
+        res.json({ new_comment_id });
+
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json("Server Error");
+    }
+});
+
 module.exports = router;

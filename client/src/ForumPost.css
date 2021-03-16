@@ -26,8 +26,8 @@
     font-weight: 600;
     font-size: medium;
     color: #464855;
-    padding: 5px 0;
-    margin-bottom: 0px;
+    margin-bottom: auto;
+    margin-top: 10px;
 }
 
 .forumPost__center >  .forumPost__info {
@@ -45,7 +45,8 @@ p.forumPost__info {
 
 .forumPost__left {
     padding: 0px 15px;
-    margin-bottom: 30px;
+    margin-bottom: auto;
+    margin-top: 15px;
 }
 
 .createPost {
@@ -54,4 +55,15 @@ p.forumPost__info {
 
 textarea {
     border-radius: 0px;
+}
+
+.forumPost__post {
+    line-height:1.2em;
+    font-size: 20px;
+    font-family:sans-serif;
+    white-space: pre-wrap;       /* Since CSS 2.1 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
 }

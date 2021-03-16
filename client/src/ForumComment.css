@@ -46,3 +46,23 @@ textarea {
     border-radius: 0px;
 }
 
+pre {
+    line-height:1.2em;
+    font-family:sans-serif;
+    white-space: pre-wrap;       /* Since CSS 2.1 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+
+.forum__reply {
+    color: #898ea2;
+    cursor: pointer;
+    font-family: sans-serif;
+}
+
+.forum__width {
+    width: 100%;
+    overflow: auto;
+}
