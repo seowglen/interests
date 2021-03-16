@@ -4,6 +4,7 @@ import "./ForumPost.css";
 import { Avatar } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Button } from "@material-ui/core";
+import ForumComments from './ForumComments';
 
 const ForumPost = (props) => {
     // props.location.idProps.id returns id in string
@@ -99,6 +100,10 @@ const ForumPost = (props) => {
         }
     }
 
+    function updateComment(newComment) {
+      setCommentIds(commentIds.concat(newComment));
+    }
+
     useEffect(() => {
         getDetails();
         getPhoto();
@@ -134,6 +139,8 @@ const ForumPost = (props) => {
                 </div>
                 {/* <div className="forumPost__right"></div> */}
             </div>
+
+            <ForumComments id={id} comments={commentIds} updateComment={updateComment}/>
         </div>
     )
 }
