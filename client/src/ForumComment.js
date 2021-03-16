@@ -121,9 +121,11 @@ const ForumComment = (props) => {
                             {props.comment.forum_comment}
                         </pre>
                     </div>
-                    <p className="forum__reply" onClick={handleClickOpen}>
-                        REPLY
-                    </p>
+                    <div className="forum__reply">
+                        <p style={{cursor: "pointer"}} onClick={handleClickOpen}>
+                            REPLY
+                        </p>
+                    </div>
                     <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" fullWidth maxWidth="sm">
                         <DialogTitle id="form-dialog-title">Create Reply</DialogTitle>
                         <DialogContent>
