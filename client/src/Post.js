@@ -276,6 +276,10 @@ const Post = (props) => {
         }
     }
 
+    function deleteCommentId(comment_id) {
+        setComments(comments.filter(comment => comment !== comment_id));
+    }
+
     useEffect(() => {
         getName(props.id);
         getPhoto(props.id);
@@ -414,7 +418,7 @@ const Post = (props) => {
             </div>
             
             <div className="post__comments" id={props.id} style={{display: "none"}}>
-                {comments !== undefined ? comments.map(uid => <Comment id={uid}/>) : null}
+                {comments !== undefined ? comments.map(uid => <Comment id={uid} deleteCommentId={deleteCommentId}/>) : null}
                 <div className="commentSender">
                     <div className="inviteSender__top">
                         <Avatar src={props.picture}/>

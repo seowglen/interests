@@ -54,6 +54,14 @@ router.post('/get-comment', async (req, res) => {
             req.body.id
         ]);
 
+        const user_id = await pool.query("SELECT user_id FROM comments WHERE comment_id = $1", [req.body.id]);
+
+        if (user_id.rows[0].user_id === payload.user) {
+            comment.rows[0]['user_comment'] = true;
+        } else {
+            comment.rows[0]['user_comment'] = false;
+        }
+
         comment.rows[0]['profile_id'] = profile.rows[0].profile_id;
         comment.rows[0]['profile_name'] = profile.rows[0].profile_name;
         res.json(comment.rows[0]);
@@ -84,6 +92,52 @@ router.post('/create-comment', async (req, res) => {
         
         const new_comment_id = comment_id.rows[0];
         res.json({ new_comment_id });
+
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json("Server Error");
+    }
+});
+
+router.post('/edit-comment', async (req, res) => {
+    try {
+        const jwtToken = req.header("token");
+
+        if (!jwtToken) {
+            return res.status(403).json("Not Authorized");
+        }
+
+        const payload = jwt.verify(jwtToken, process.env.jwtSecret);
+
+        await pool.query(
+            "UPDATE comments SET comment = $1 WHERE comment_id = $2", [
+            req.body.comment,
+            req.body.id
+        ])
+        res.status(200);
+
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json("Server Error");
+    }
+});
+
+router.post('/delete-comment', async (req, res) => {
+    try {
+        const jwtToken = req.header("token");
+
+        if (!jwtToken) {
+            return res.status(403).json("Not Authorized");
+        }
+
+        const payload = jwt.verify(jwtToken, process.env.jwtSecret);
+
+        const comment_id = await pool.query(
+            "DELETE FROM comments WHERE comment_id = $1 RETURNING comment_id", [
+            req.body.id
+        ]);
+
+        res.json(comment_id.rows[0]);
 
     } catch (err) {
         console.error(err.message);

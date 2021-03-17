@@ -49,6 +49,7 @@
 
 .comment__bubble > h4 {
     font-size: small;
+    font-weight: normal;
     color: gray;
     margin-top: -1px;
 }
