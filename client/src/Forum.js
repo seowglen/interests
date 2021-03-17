@@ -115,7 +115,7 @@ const Forum = ({ setAuth }) => {
             <Header displayName={name} picture={picture} setAuth={setAuth} logout={logout} currentPage='forum'/>
             <div className="createPost">
                 <Grid container justify="center">
-                    <Button variant="outlined" color="primary" onClick={handleClickOpen}>
+                    <Button variant="contained" style={{backgroundColor: '#4A406C', color: "white"}} onClick={handleClickOpen}>
                         Create New Post
                     </Button>
                 </Grid>

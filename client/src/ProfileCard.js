@@ -37,7 +37,8 @@ const useStyles = makeStyles(theme => ({
         textTransform: "none",
         paddingLeft: theme.spacing(6),
         paddingRight: theme.spacing(6),
-        fontWeight: theme.typography.fontWeightMedium
+        fontWeight: theme.typography.fontWeightMedium,
+        "&:hover": { backgroundColor: "#f7196e" },
     }
 }));
 
@@ -103,16 +104,17 @@ const ProfileCard = ({ id }) => {
             <div className={classes.otherName}>
                 <Typography variant="caption" color="textSecondary">{groups} Mutual Groups</Typography>
             </div>
-            <Button className={classes.profileButton} disableElevation variant="contained" size="small">
-                <Link to={{
+            <Link to={{
                     pathname: '/otherProfile',
                     idProps: {
                         id: id
                     }
                 }} style={{ textDecoration: 'none', color: 'white' }}>
+                <Button className={classes.profileButton} disableElevation variant="contained" size="small">
+                
                     Profile
-                </Link>
-            </Button>
+                </Button>
+            </Link>
         </Grid>
     )
 }

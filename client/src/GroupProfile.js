@@ -25,8 +25,8 @@ const useStyles = makeStyles((theme) => ({
     "&:hover": { backgroundColor: "#dcdcdc" },
   },
   large: {
-    width: theme.spacing(25),
-    height: theme.spacing(25),
+    width: theme.spacing(18),
+    height: theme.spacing(18),
   },
   icon: {
     position: "absolute",

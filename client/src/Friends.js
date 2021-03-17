@@ -11,8 +11,8 @@ import Button from '@material-ui/core/Button';
 
 const useStyles = makeStyles(theme => ({
     root: {
-        paddingLeft: theme.spacing(5),
-        paddingRight: theme.spacing(5)
+        paddingLeft: theme.spacing(14),
+        paddingRight: theme.spacing(14)
     },
     active: {
         backgroundColor: "#E27B66",

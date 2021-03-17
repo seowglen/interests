@@ -14,7 +14,8 @@ const useStyles = makeStyles(theme => ({
         padding: theme.spacing(2),
         borderRadius: "3px",
         maxWidth: 200,
-        margin: theme.spacing(3) 
+        margin: theme.spacing(3),
+        backgroundColor: "white" 
     },
     avatar: {
         width: theme.spacing(7),
@@ -36,7 +37,8 @@ const useStyles = makeStyles(theme => ({
         textTransform: "none",
         paddingLeft: theme.spacing(6),
         paddingRight: theme.spacing(6),
-        fontWeight: theme.typography.fontWeightMedium
+        fontWeight: theme.typography.fontWeightMedium,
+        "&:hover": { backgroundColor: "#f7196e" },
     }
 }));
 
@@ -100,16 +102,16 @@ const GroupCard = ({ id }) => {
             <div className={classes.otherName}>
                 <Typography variant="caption" color="textSecondary">Hello</Typography>
             </div>
-            <Button className={classes.profileButton} disableElevation variant="contained" size="small">
-                <Link to={{
-                    pathname: '/groupProfile',
-                    idProps: {
-                        id: id
-                    }
-                }} style={{ textDecoration: 'none', color: 'white' }}>
-                    Profile
-                </Link>
-            </Button>
+            <Link to={{
+                pathname: '/groupProfile',
+                idProps: {
+                    id: id
+                }
+            }} style={{ textDecoration: 'none', color: 'white' }}>
+                <Button className={classes.profileButton} disableElevation variant="contained" size="small">
+                        Profile
+                </Button>
+            </Link>
         </Grid>
     )
 }

@@ -31,6 +31,10 @@
     margin-bottom: 0px;
 }
 
+.forumPost__center > h3:hover {
+    text-decoration: underline;
+}
+
 .forumPost__center >  .forumPost__info {
     font-size: smaller;
     color: #898ea2

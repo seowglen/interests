@@ -7,9 +7,25 @@ import GroupCard from './GroupCard';
 
 const useStyles = makeStyles(theme => ({
     root: {
-        paddingLeft: theme.spacing(5),
-        paddingRight: theme.spacing(5)
-    }
+        paddingLeft: theme.spacing(14),
+        paddingRight: theme.spacing(14)
+    },
+    active: {
+        backgroundColor: "#E27B66",
+        color: "white",
+        "&:hover": {
+            backgroundColor: "#E27B66",
+            color: "white"
+        }
+    },
+    head: {
+        backgroundColor: '#4A406C',
+        color: "white",
+        "&:hover": {
+            backgroundColor: "#f7196e",
+            color: "white"
+        }
+    },
 }));
 
 const Groups = ({ setAuth }) => {
@@ -22,6 +38,8 @@ const Groups = ({ setAuth }) => {
     const [createGroup, setCreateGroup] = useState(0);
     const [newGroupName, setNewGroupName] = useState('');
     const [errorInput, setErrorInput] = useState(0);
+    const [toggleList, setToggleList] = useState(false);
+    const [toggleConsider, setToggleConsider] = useState(false);
 
     const logout = (e) => {
         e.preventDefault();
@@ -116,10 +134,21 @@ const Groups = ({ setAuth }) => {
         }
     }
 
+    function handleList() {
+        setToggleList(true);
+        setToggleConsider(false);
+    }
+
+    function handleConsider() {
+        setToggleList(false);
+        setToggleConsider(true);
+    }
+
     useEffect(() => {
         getDetails();
         getPhoto();
         getGroupIds();
+        setToggleList(true);
     }, []);
 
     return (
@@ -142,7 +171,9 @@ const Groups = ({ setAuth }) => {
             }
             <div className={classes.root}>
                 {createGroup === 0 ?
-                    <Button onClick={() => setCreateGroup(1)}>Create New Group</Button>
+                    <div className="groups__bar">
+                        <Button variant="contained" className={classes.head} onClick={() => setCreateGroup(1)}>Create New Group</Button>
+                    </div>
                 :   
                     <div className="newGroup__top">                
                         <form>
@@ -159,24 +190,39 @@ const Groups = ({ setAuth }) => {
                     </div>
                 }
             </div>
-            <h3>These are my groups:</h3>
-            <div className={classes.root}>
-                {/* <Typography variant="h5">My Friends:</Typography> */}
-                <Grid container spacing={3}>
-                    {groupID.map(uid => (
-                        <GroupCard id={uid}/>
-                    ))}
-                </Grid>
+
+            <div className="groups__bar__options">
+                <Button variant="contained" className={(toggleList ? classes.active : '')} onClick={() => handleList()}>
+                    Groups List ({groupID.length})
+                </Button>
+                <Button variant="contained" className={(toggleConsider ? classes.active : '')} onClick={() => handleConsider()}>
+                    Groups To Consider ({otherGroupID.length})
+                </Button>
             </div>
-            <h3>Groups to consider:</h3>
-            <div className={classes.root}>
-                {/* <Typography variant="h5">Friends To Consider:</Typography> */}
-                <Grid container spacing={3}>
-                    {otherGroupID.map(uid => (
-                        <GroupCard id={uid}/>
-                    ))}
-                </Grid>
-            </div>
+            
+            {toggleList ? 
+                <div className={classes.root}>
+                    {/* <Typography variant="h5">My Friends:</Typography> */}
+                    <Grid container spacing={3}>
+                        {groupID.map(uid => (
+                            <GroupCard id={uid}/>
+                        ))}
+                    </Grid>
+                </div>
+            : null
+            }
+            
+            {toggleConsider ? 
+                <div className={classes.root}>
+                    {/* <Typography variant="h5">Friends To Consider:</Typography> */}
+                    <Grid container spacing={3}>
+                        {otherGroupID.map(uid => (
+                            <GroupCard id={uid}/>
+                        ))}
+                    </Grid>
+                </div>
+            : null
+            }            
         </div>
     );
 }
