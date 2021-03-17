@@ -102,7 +102,7 @@ const ProfileCard = ({ id }) => {
             </div>
             <Typography variant="h6" className={classes.profileName}>{name}</Typography>
             <div className={classes.otherName}>
-                <Typography variant="caption" color="textSecondary">{groups} Mutual Groups</Typography>
+                <Typography variant="caption" color="textSecondary">{groups} {groups === 1 ? "Mutual Group" : "Mutual Groups"}</Typography>
             </div>
             <Link to={{
                     pathname: '/otherProfile',

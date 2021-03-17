@@ -7,8 +7,8 @@ import GroupCard from './GroupCard';
 
 const useStyles = makeStyles(theme => ({
     root: {
-        paddingLeft: theme.spacing(14),
-        paddingRight: theme.spacing(14)
+        paddingLeft: theme.spacing(15),
+        paddingRight: theme.spacing(15)
     },
     active: {
         backgroundColor: "#E27B66",

@@ -27,7 +27,17 @@ router.post('/get-details', async (req, res) => {
         const group_joined = await pool.query("SELECT * FROM user_group WHERE user_id = ($1) AND group_id = ($2)", [
             payload.user,
             req.body.id
-        ])
+        ]);
+
+        const members = await pool.query("SELECT profile_id FROM users WHERE user_id IN (SELECT user_id FROM user_group WHERE group_id = $1)", [
+            req.body.id
+        ]);
+
+        var profile_ids = [];
+        for (var i=0; i<members.rows.length; i++) {
+            profile_ids.push(members.rows[i].profile_id);
+        }
+        group_profile.rows[0]['profile_ids'] = profile_ids;
 
         if (group_joined.rows.length === 0) {
             group_profile.rows[0]["group_joined"] = false;

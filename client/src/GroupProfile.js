@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import Header from "./Header";
 import "./OtherProfile.css";
-import { Avatar } from "@material-ui/core";
+import { Grid, Avatar, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Button } from "@material-ui/core";
 import EditIcon from '@material-ui/icons/Edit';
 import IconButton from "@material-ui/core/IconButton";
+import ProfileCard from './ProfileCard';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -35,6 +36,11 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#f0f0f0",
     "&:hover": { backgroundColor: "#dcdcdc" },
   },
+  profiles: {
+    paddingLeft: theme.spacing(15),
+    paddingRight: theme.spacing(15),
+    backgroundColor: "#fffffb",
+  }
 }));
 
 const OtherProfile = (props) => {
@@ -52,6 +58,7 @@ const OtherProfile = (props) => {
   const [editInfo, setEditInfo] = useState(0);
   const [inputInfo, setInputInfo] = useState("");
   const [groupJoined, setGroupJoined] = useState(null);
+  const [profileIDs, setProfileIDs] = useState([]);
 
   const logout = (e) => {
     e.preventDefault();
@@ -107,6 +114,7 @@ const OtherProfile = (props) => {
       setGroupName(parseRes.group_name);
       setGroupInfo(parseRes.group_info);
       setGroupJoined(parseRes.group_joined);
+      setProfileIDs(parseRes.profile_ids);
       // setInfo(parseRes.profile_info);
     } catch (err) {
       console.error(err.message);
@@ -332,7 +340,7 @@ const OtherProfile = (props) => {
                 
         {editInfo === 0 ?
             <div className={classes.root} style={{ marginLeft: "40px", marginTop: "20px"}}>
-                <h3>{groupInfo}</h3>
+                <h3 style={{marginBottom: '30px'}}>{groupInfo}</h3>
                     {/* <IconButton className={classes.small} onClick={upload}> */}
                 <IconButton id="name" className={classes.small} onClick={handleEditInfo}>
                     <EditIcon />
@@ -353,6 +361,14 @@ const OtherProfile = (props) => {
                 </form>
             </div>
         }
+      </div>
+      <div className={classes.profiles}>
+        <Typography variant="h5" style={{marginBottom: '15px'}}>{profileIDs.length} {profileIDs.length === 1 ? 'member' : 'members'}</Typography>
+        <Grid container spacing={3} style={{borderTop: "5px solid #DCDCDC", borderTopWidth: "thin"}}>
+            {profileIDs.map(uid => (
+              <ProfileCard id={uid}/>
+            ))}
+        </Grid>
       </div>
     </div>
   );

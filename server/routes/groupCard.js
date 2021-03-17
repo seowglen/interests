@@ -10,7 +10,7 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const path = require('path');
 
-router.post('/get-name', async (req, res) => {
+router.post('/get-details', async (req, res) => {
     try {
         const jwtToken = req.header("token");
 
@@ -24,7 +24,18 @@ router.post('/get-name', async (req, res) => {
             req.body.id
         ]);
 
-        res.json(group_name.rows[0].group_name);
+        const members = await pool.query("SELECT (user_id) FROM user_group WHERE group_id = $1", [
+            req.body.id
+        ])
+
+        var group_details = {};
+        var group_members = [];
+
+        group_details["group_name"] = group_name.rows[0].group_name;
+
+        group_details['group_members'] = members.rows.length;
+
+        res.json(group_details);
         // const id = req.body.id;
         // res.json({ id });
 

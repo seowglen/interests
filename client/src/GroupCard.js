@@ -47,10 +47,11 @@ const GroupCard = ({ id }) => {
     const classes = useStyles();
     const [name, setName] = useState("");
     const [picture, setPicture] = useState(null);
+    const [members, setMembers] = useState(0);
 
-    async function getName(id) {
+    async function getDetails(id) {
         try {
-            const response = await fetch('http://localhost:5000/groupCard/get-name', {
+            const response = await fetch('http://localhost:5000/groupCard/get-details', {
                 method: "POST",
                 headers: {
                     token: localStorage.token,
@@ -60,8 +61,8 @@ const GroupCard = ({ id }) => {
             });
             
             const parseRes = await response.json();
-            console.log(parseRes);
-            setName(parseRes);
+            setName(parseRes.group_name);
+            setMembers(parseRes.group_members);
             // setPicture(parseRes.profile_picture);
             // setInfo(parseRes.profile_info);
         } catch (err) {
@@ -89,7 +90,7 @@ const GroupCard = ({ id }) => {
     }
 
     useEffect(() => {
-        getName(id);
+        getDetails(id);
         getPhoto(id);
     }, [id]);
 
@@ -100,7 +101,7 @@ const GroupCard = ({ id }) => {
             </div>
             <Typography variant="h6" className={classes.profileName}>{name}</Typography>
             <div className={classes.otherName}>
-                <Typography variant="caption" color="textSecondary">Hello</Typography>
+                <Typography variant="caption" color="textSecondary">{members} {members === 1 ? "member" : "members"}</Typography>
             </div>
             <Link to={{
                 pathname: '/groupProfile',
@@ -109,7 +110,7 @@ const GroupCard = ({ id }) => {
                 }
             }} style={{ textDecoration: 'none', color: 'white' }}>
                 <Button className={classes.profileButton} disableElevation variant="contained" size="small">
-                        Profile
+                    Profile
                 </Button>
             </Link>
         </Grid>
