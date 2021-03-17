@@ -49,6 +49,7 @@ CREATE TABLE forum_comments (
 	forum_post_id uuid NOT NULL,
 	time_stamp timestamp,
 	forum_comment varchar(3071),
+	parent_comment_id uuid,
 	FOREIGN KEY (user_id) REFERENCES users (user_id),
 	FOREIGN KEY (forum_post_id) REFERENCES forum_posts (forum_post_id)
 )

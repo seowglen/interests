@@ -87,6 +87,14 @@ router.post('/get-post', async (req, res) => {
             req.body.id
         ]);
 
+        const user_id = await pool.query("SELECT user_id FROM posts WHERE post_id = $1", [req.body.id]);
+
+        if (user_id.rows[0].user_id === payload.user) {
+            post.rows[0]['user_post'] = true;
+        } else {
+            post.rows[0]['user_post'] = false;
+        }
+
         if (comment_ids.rows === undefined) {
             post.rows[0]['comment_ids'] = []
         } else {
@@ -215,6 +223,29 @@ router.post('/get-likes-names', async (req, res) => {
             res_likes_names['likes_names'] = likes_names;
         }
         res.json(res_likes_names);
+
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json("Server Error");
+    }
+});
+
+router.post('/edit-post', async (req, res) => {
+    try {
+        const jwtToken = req.header("token");
+
+        if (!jwtToken) {
+            return res.status(403).json("Not Authorized");
+        }
+
+        const payload = jwt.verify(jwtToken, process.env.jwtSecret);
+
+        await pool.query(
+            "UPDATE posts SET post = $1 WHERE post_id = $2", [
+            req.body.post,
+            req.body.id
+        ])
+        res.status(200);
 
     } catch (err) {
         console.error(err.message);

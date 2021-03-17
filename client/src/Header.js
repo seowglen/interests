@@ -39,12 +39,12 @@ function Header(props) {
                 </div>
                 <div className={"header__option" + (props.currentPage === 'forum' ? ' header__option--active' : '')}>
                     <Link to='/forum' style={{ textDecoration: 'none', color: 'gray' }}>
-                        <ForumIcon />
+                        <ChatIcon />
                     </Link>
                 </div>
                 <div className={"header__option" + (props.currentPage === 'chat' ? ' header__option--active' : '')}>
                     <Link to='/chat' style={{ textDecoration: 'none', color: 'gray' }}>
-                        <ChatIcon />
+                        <ForumIcon />
                     </Link>
                 </div>               
             </div>

@@ -12,9 +12,27 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
+import { makeStyles } from '@material-ui/core/styles';
 
+const useStyles = makeStyles((theme) => ({
+    small: {
+      width: theme.spacing(2.5),
+      height: theme.spacing(2.5),
+      color: '#A9A9A9',
+      cursor: "pointer",
+      "&:hover": { color: "#808080" },
+    },
+    edit: {
+        paddingLeft: '25px',
+        paddingRight: '25px'
+    }
+}));
 
 const Post = (props) => {
+
+    const classes = useStyles();
 
     const [input, setInput] = useState('');
     const [comments, setComments] = useState([]);
@@ -27,16 +45,34 @@ const Post = (props) => {
     const [groupName, setGroupName] = useState('');
     const [liked, setLiked] = useState(false);
     const [open, setOpen] = React.useState(false);
+    const [openEdit, setOpenEdit] = React.useState(false);
     const [likesNames, setLikesNames] = useState([]);
+    const [currentUserPost, setCurrentUserPost] = useState(false);
+    const [original, setOriginal] = useState("");
 
     const handleClickOpen = () => {
         setOpen(true);
         getLikesNames(props.id);
     };
 
+    const handleClickOpenEdit = () => {
+        setOpenEdit(true);
+        setOriginal(post);
+    }
+
     const handleClose = () => {
         setOpen(false);
     };
+
+    const handleCloseEdit = () => {
+        setOpenEdit(false);
+        setPost(original);
+    };
+
+    const handleCreateEdit = () => {
+        setOpenEdit(false);
+        editPost(props.id, post);
+    }
 
     async function getName(data) {
         try {
@@ -96,6 +132,7 @@ const Post = (props) => {
             setLikes(parseRes.likes);
             setLiked(parseRes.liked);
             setGroupName(parseRes.group_name);
+            setCurrentUserPost(parseRes.user_post);
             // setInfo(parseRes.profile_info);
         } catch (err) {
             console.error(err.message);
@@ -185,6 +222,26 @@ const Post = (props) => {
         }
     }
 
+    async function editPost(id, data) {
+        try {
+            const response = await fetch('http://localhost:5000/post/edit-post', {
+                method: "POST",
+                headers: {
+                    token: localStorage.token,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ 
+                    id: id,
+                    post: data
+                })
+            });
+
+            const parseRes = await response.json();
+        } catch (err) {
+            console.error(err.message);
+        }
+    }
+
     useEffect(() => {
         getName(props.id);
         getPhoto(props.id);
@@ -230,9 +287,42 @@ const Post = (props) => {
                     <p>{groupName}</p>
                     <p>{timeStamp}</p>
                 </div>
+                { currentUserPost && 
+                    <div style={{position: 'absolute', right: '15px', top: '15px', display: 'flex'}}>
+                        <div style={{marginRight: '15px'}}>
+                            <EditIcon className={classes.small} onClick={handleClickOpenEdit} />
+                            <Dialog open={openEdit} onClose={handleCloseEdit} aria-labelledby="form-dialog-title" fullWidth maxWidth="sm">
+                                <DialogTitle id="form-dialog-title">Edit your post here.</DialogTitle>
+                                <TextField
+                                    autoFocus
+                                    margin="dense"
+                                    id="name"
+                                    type="text" 
+                                    fullWidth
+                                    multiline
+                                    rows={5}
+                                    rowsMax={5}
+                                    onChange={e => setPost(e.target.value)}
+                                    className={classes.edit}
+                                />
+                                <DialogActions>
+                                    <Button onClick={handleCloseEdit} color="primary">
+                                        Cancel
+                                    </Button>
+                                    <Button onClick={handleCreateEdit} color="primary">
+                                        Done
+                                    </Button>
+                                </DialogActions>
+                            </Dialog>
+                        </div>
+                        <div>
+                            <DeleteIcon className={classes.small} />
+                        </div>
+                    </div>
+                }
             </div>
             <div className="post__bottom">
-                <p>{post}</p>
+                <pre>{post}</pre>
             </div>
             <div>
                 <div className="post__details">

@@ -77,7 +77,7 @@ const Comment = (props) => {
                                     {name}
                                 </Link>
                                 <h4>{timeStamp}</h4>
-                                <p>{comment}</p>
+                                <pre>{comment}</pre>
                             </div>
                         </div>
                     </div>
