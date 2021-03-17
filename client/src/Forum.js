@@ -111,7 +111,7 @@ const Forum = ({ setAuth }) => {
     }, []);
 
     return(
-        <div>
+        <div style={{backgroundColor: '#FaFaFa'}}>
             <Header displayName={name} picture={picture} setAuth={setAuth} logout={logout} currentPage='forum'/>
             <div className="createPost">
                 <Grid container justify="center">

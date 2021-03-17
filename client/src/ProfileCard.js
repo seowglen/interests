@@ -14,7 +14,8 @@ const useStyles = makeStyles(theme => ({
         padding: theme.spacing(2),
         borderRadius: "3px",
         maxWidth: 200,
-        margin: theme.spacing(3) 
+        margin: theme.spacing(3) ,
+        backgroundColor: "white"
     },
     avatar: {
         width: theme.spacing(7),

@@ -61,7 +61,7 @@ const ForumComments = (props) => {
                 {props.comments && props.comments.map((comment) => (
                     (!comment.parent_comment_id &&
                         <div>
-                            <ForumComment comment={comment} id={props.id} updateComment={props.updateComment}/>
+                            <ForumComment comments={props.comments} comment={comment} id={props.id} updateComment={props.updateComment}/>
                             <ReplyComment comments={props.comments} id={props.id} parentCommentId={comment.forum_comment_id} updateComment={props.updateComment}/>
                         </div>
                     )

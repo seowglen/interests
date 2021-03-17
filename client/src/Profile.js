@@ -24,6 +24,10 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: '#f0f0f0',
       "&:hover": { backgroundColor: "#dcdcdc" },
     },
+    medium: {
+        width: theme.spacing(18),
+        height: theme.spacing(18),
+    },
     large: {
       width: theme.spacing(25),
       height: theme.spacing(25),
@@ -189,7 +193,7 @@ const Profile = ({ setAuth }) => {
             <Header displayName={name} picture={picture} setAuth={setAuth} logout={logout} currentPage='profile'/>
             <div className='profile'>
                 <div className={classes.root}>
-                    {picture ? <Avatar src={picture} className={classes.large}/> : <Avatar className={classes.large}/>}
+                    {picture ? <Avatar src={picture} className={classes.medium}/> : <Avatar className={classes.medium}/>}
                     <IconButton className={classes.icon} onClick={upload}>
                         <EditIcon />
                         <input id='selectImage' hidden type="file" onChange={handleImageChange}/>

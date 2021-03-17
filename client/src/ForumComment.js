@@ -16,6 +16,7 @@ const ForumComment = (props) => {
     const [userPicture, setUserPicture] = useState(null);
     const [userName, setUserName] = useState("");
     const [reply, setReply] = useState("");
+    const [numReplies, setNumReplies] = useState(0);
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -29,6 +30,16 @@ const ForumComment = (props) => {
         setOpen(false);
         createReply(props.comment.forum_post_id, reply, props.comment.forum_comment_id);
     };
+
+    function getNumberReplies(comments, current_comment_id) {
+        let replyCount = 0;
+        comments.map((comment) => {
+            if (comment.parent_comment_id === current_comment_id) {
+                replyCount = replyCount + 1;
+            }
+        })
+        setNumReplies(replyCount);
+    }
 
     async function createReply(post_id, data, comment_id) {
         try {
@@ -100,6 +111,7 @@ const ForumComment = (props) => {
     useEffect(() => {
         getNameUser(props.comment.user_id);
         getPhotoUser(props.comment.user_id);
+        getNumberReplies(props.comments, props.comment.forum_comment_id);
     }, [props]);
 
     return(
@@ -125,6 +137,11 @@ const ForumComment = (props) => {
                         <p style={{cursor: "pointer"}} onClick={handleClickOpen}>
                             REPLY
                         </p>
+                        {numReplies > 0 &&
+                            <p style={{cursor: "pointer", marginLeft: "30px", color: "#E27B66"}}>
+                                {numReplies} REPLIES
+                            </p>
+                        }
                     </div>
                     <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" fullWidth maxWidth="sm">
                         <DialogTitle id="form-dialog-title">Create Reply</DialogTitle>

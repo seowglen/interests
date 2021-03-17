@@ -26,6 +26,10 @@ const useStyles = makeStyles((theme) => ({
     width: theme.spacing(25),
     height: theme.spacing(25),
   },
+  medium: {
+    width: theme.spacing(17),
+    height: theme.spacing(17),
+  },
   icon: {
     position: "absolute",
     bottom: "0",
@@ -232,9 +236,9 @@ const OtherProfile = (props) => {
         </div>
         <div className={classes.root}>
           {userPicture ? (
-            <Avatar src={userPicture} className={classes.large} />
+            <Avatar src={userPicture} className={classes.medium} />
           ) : (
-            <Avatar className={classes.large} />
+            <Avatar className={classes.medium} />
           )}
         </div>
         <div className={classes.root} style={{ marginTop: "20px" }}>
