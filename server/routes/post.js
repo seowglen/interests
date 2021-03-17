@@ -253,4 +253,37 @@ router.post('/edit-post', async (req, res) => {
     }
 });
 
+router.post('/delete-post', async (req, res) => {
+    try {
+        const jwtToken = req.header("token");
+
+        if (!jwtToken) {
+            return res.status(403).json("Not Authorized");
+        }
+
+        const payload = jwt.verify(jwtToken, process.env.jwtSecret);
+
+        await pool.query(
+            "DELETE FROM likes WHERE post_id = $1", [
+            req.body.id
+        ]);
+
+        await pool.query(
+            "DELETE FROM comments WHERE post_id = $1", [
+            req.body.id
+        ]);
+
+        const post_id = await pool.query(
+            "DELETE FROM posts WHERE post_id = $1 RETURNING post_id", [
+            req.body.id
+        ]);
+
+        res.json(post_id.rows[0]);
+
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json("Server Error");
+    }
+});
+
 module.exports = router;

@@ -12,6 +12,7 @@ const Home = ({ setAuth }) => {
     const [postIDs, setPostIDs] = useState([]);
     const [category, setCategory] = useState('');
     const [groupNames, setGroupNames] = useState([]);
+    const [placeholder, setPlaceHolder] = useState(null);
 
     async function getName() {
         try {
@@ -95,13 +96,26 @@ const Home = ({ setAuth }) => {
 
     function handleSubmit(e) {
         e.preventDefault();
-        createPost(input, category);
+        console.log(category);
+        console.log(typeof(category));
+        if (input === '') {
+            setPlaceHolder('ERROR: Please do not leave your post blank!');
+        } else if (category == null) {
+            setPlaceHolder('ERROR: You do not have any groups joined, join a group first!');
+        } else {
+            createPost(input, category);
+            setPlaceHolder(null);
+        }
         setInput("");
     }
 
     function handleCategoryChange(category) {
         console.log(category)
         setCategory(category);
+    }
+
+    function deletePostId(post_id) {
+        setPostIDs(postIDs.filter(postID => postID !== post_id));
     }
 
     useEffect(() => {
@@ -124,7 +138,7 @@ const Home = ({ setAuth }) => {
                                 className="inviteSender__input" 
                                 rows="1" 
                                 cols="50" 
-                                placeholder={`Post an invite, or write what's on your mind here, ${name}.`}
+                                placeholder={placeholder ? `${placeholder}` : `Post an invite, or write what's on your mind here, ${name}.`}
                             ></textarea>
                             
                             <select value={category} onChange={e => handleCategoryChange(e.target.value)}>
@@ -138,7 +152,7 @@ const Home = ({ setAuth }) => {
                     </div>
                 </div>
                 {postIDs.map(uid => (
-                    <Post id={uid} picture={picture} name={name}/>
+                    <Post id={uid} picture={picture} name={name} deletePostId={deletePostId}/>
                 ))}    
             </div>
         </div>

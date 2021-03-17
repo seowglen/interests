@@ -46,6 +46,7 @@ const Post = (props) => {
     const [liked, setLiked] = useState(false);
     const [open, setOpen] = React.useState(false);
     const [openEdit, setOpenEdit] = React.useState(false);
+    const [openDelete, setOpenDelete] = React.useState(false);
     const [likesNames, setLikesNames] = useState([]);
     const [currentUserPost, setCurrentUserPost] = useState(false);
     const [original, setOriginal] = useState("");
@@ -60,6 +61,10 @@ const Post = (props) => {
         setOriginal(post);
     }
 
+    const handleClickOpenDelete = () => {
+        setOpenDelete(true);
+    }
+
     const handleClose = () => {
         setOpen(false);
     };
@@ -69,9 +74,18 @@ const Post = (props) => {
         setPost(original);
     };
 
+    const handleCloseDelete = () => {
+        setOpenDelete(false);
+    };
+
     const handleCreateEdit = () => {
         setOpenEdit(false);
         editPost(props.id, post);
+    }
+
+    const handleCreateDelete = () => {
+        setOpenDelete(false);
+        deletePost(props.id);
     }
 
     async function getName(data) {
@@ -242,6 +256,26 @@ const Post = (props) => {
         }
     }
 
+    async function deletePost(id) {
+        try {
+            const response = await fetch('http://localhost:5000/post/delete-post', {
+                method: "POST",
+                headers: {
+                    token: localStorage.token,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ 
+                    id: id,
+                })
+            });
+
+            const parseRes = await response.json();
+            props.deletePostId(parseRes.post_id);
+        } catch (err) {
+            console.error(err.message);
+        }
+    }
+
     useEffect(() => {
         getName(props.id);
         getPhoto(props.id);
@@ -316,7 +350,23 @@ const Post = (props) => {
                             </Dialog>
                         </div>
                         <div>
-                            <DeleteIcon className={classes.small} />
+                            <DeleteIcon className={classes.small} onClick={handleClickOpenDelete}/>
+                            <Dialog open={openDelete} onClose={handleCloseDelete} aria-labelledby="form-dialog-title" fullWidth maxWidth="sm">
+                                <DialogTitle id="form-dialog-title">Are you sure you want to delete this post?</DialogTitle>
+                                    <DialogContent>
+                                        <DialogContentText>
+                                            All subsequent likes and comments will be deleted.
+                                        </DialogContentText>                            
+                                    </DialogContent>
+                                    <DialogActions>
+                                        <Button onClick={handleCloseDelete} color="primary">
+                                            Cancel
+                                        </Button>
+                                        <Button onClick={handleCreateDelete} color="primary">
+                                            Delete
+                                        </Button>
+                                </DialogActions>
+                            </Dialog>
                         </div>
                     </div>
                 }
