@@ -315,7 +315,7 @@ const OtherProfile = (props) => {
           </IconButton>
         </div>
         {editName === 0 ?
-            <div className={classes.root} style={{ marginLeft: "40px", marginTop: "20px"}}>
+            <div className={classes.root} style={{ marginLeft: "40px"}}>
                 <h1>{groupName}</h1>
                     {/* <IconButton className={classes.small} onClick={upload}> */}
                 <IconButton id="name" className={classes.small} onClick={handleEditName}>
@@ -339,8 +339,8 @@ const OtherProfile = (props) => {
         }
                 
         {editInfo === 0 ?
-            <div className={classes.root} style={{ marginLeft: "40px", marginTop: "20px"}}>
-                <h3 style={{marginBottom: '30px'}}>{groupInfo}</h3>
+            <div className={classes.root} style={{ marginLeft: "40px", marginTop: "10px"}}>
+                <h3>{groupInfo}</h3>
                     {/* <IconButton className={classes.small} onClick={upload}> */}
                 <IconButton id="name" className={classes.small} onClick={handleEditInfo}>
                     <EditIcon />
