@@ -3,7 +3,8 @@ import Header from "./Header";
 import "./OtherProfile.css";
 import { Avatar } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import { Button } from "@material-ui/core";
+import { Button, Grid, Typography } from "@material-ui/core";
+import GroupCard from './GroupCard';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -37,6 +38,11 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#f0f0f0",
     "&:hover": { backgroundColor: "#dcdcdc" },
   },
+  groups: {
+    paddingLeft: theme.spacing(14),
+    paddingRight: theme.spacing(14),
+    backgroundColor: "#fffffb",
+  }
 }));
 
 const OtherProfile = (props) => {
@@ -50,6 +56,8 @@ const OtherProfile = (props) => {
   const [userPicture, setUserPicture] = useState(null);
   const [userInfo, setUserInfo] = useState("");
   const [request, setRequest] = useState("");
+  const [groupIDs, setGroupIDs] = useState([]);
+  const [ownself, setOwnself] = useState(false);
 
   const logout = (e) => {
     e.preventDefault();
@@ -105,6 +113,8 @@ const OtherProfile = (props) => {
       setUserName(parseRes.profile_name);
       setUserInfo(parseRes.profile_info);
       setRequest(parseRes.friend_request);
+      setGroupIDs(parseRes.group_ids);
+      setOwnself(parseRes.ownself);
       // setInfo(parseRes.profile_info);
     } catch (err) {
       console.error(err.message);
@@ -219,34 +229,41 @@ const OtherProfile = (props) => {
       />
       <div className="profile">
         <div>
-          {request === "receiver" && (
-            <div>
-              <h4>{userName} has sent you a friend request.</h4>
-              <Button onClick={() => accept(userProfileID)}>Accept</Button>
-              <Button onClick={() => reject(userProfileID)}>Reject</Button>
+          {!ownself && request === "receiver" && (
+            <div style={{display: 'flex', justifyContent: 'space-evenly'}}>
+              <Button variant="contained" style={{backgroundColor: "#ffa6a6", color: "white", marginRight: '20px'}} onClick={() => accept(userProfileID)}>✓ Accept</Button>
+              <Button variant="contained" style={{backgroundColor: "#E27B66", color: "white", marginLeft: '20px'}} onClick={() => reject(userProfileID)}>X Reject</Button>
             </div>
           )}
-          {request === "sender" && <h4>Friend request pending</h4>}
-          {request === "accepted" && <h4>You are friends with {userName}</h4>}
-          {request === null && (
-            <Button onClick={() => send(userProfileID)}>
-              <h4>Send {userName} a friend request.</h4>
+          {!ownself && request === "sender" && <Button variant="contained" style={{backgroundColor: "#b3b3b3", color: "white"}}>⧗ REQUEST PENDING</Button>}
+          {!ownself && request === "accepted" && <Button variant="contained" style={{backgroundColor: "#ffa6a6", color: "white"}}>✓ FRIENDS</Button>}
+          {!ownself && request === null && (
+            <Button variant="contained" style={{backgroundColor: "#E27B66", color: "white"}} onClick={() => send(userProfileID)}>
+              ⮞ Send friend request
             </Button>
           )}
         </div>
         <div className={classes.root}>
           {userPicture ? (
-            <Avatar src={userPicture} className={classes.medium} />
+            <Avatar style={{marginTop: '20px'}} src={userPicture} className={classes.medium} />
           ) : (
-            <Avatar className={classes.medium} />
+            <Avatar style={{marginTop: '20px'}} className={classes.medium} />
           )}
         </div>
-        <div className={classes.root} style={{ marginTop: "20px" }}>
+        <div className={classes.root}>
           <h1>{userName}</h1>
         </div>
-        <div className={classes.root} style={{ marginTop: "20px" }}>
+        <div className={classes.root} style={{ marginTop: "10px" }}>
           <h3>{userInfo}</h3>
         </div>
+      </div>
+      <div className={classes.groups}>
+        <Typography variant="h5" style={{marginBottom: '15px'}}>{groupIDs.length} {groupIDs.length === 1 ? 'group' : 'groups'}</Typography>
+        <Grid container spacing={3} style={{borderTop: "5px solid #DCDCDC", borderTopWidth: "thin"}}>
+            {groupIDs.map(uid => (
+              <GroupCard id={uid}/>
+            ))}
+        </Grid>
       </div>
     </div>
   );

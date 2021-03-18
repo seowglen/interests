@@ -28,6 +28,22 @@ router.post('/get-details', async (req, res) => {
             req.body.id
         ]);
 
+        if (user_id_from_profile.rows[0].user_id === payload.user) {
+            profile.rows[0]['ownself'] = true;
+        } else {
+            profile.rows[0]['ownself'] = false;
+        }
+
+        const group_id = await pool.query("SELECT group_id FROM user_group WHERE user_id IN (SELECT user_id FROM users WHERE profile_id = $1)", [
+            req.body.id
+        ]);
+
+        var group_ids = [];
+        for (var i=0; i<group_id.rows.length; i++) {
+            group_ids.push(group_id.rows[i].group_id);
+        }
+        profile.rows[0]['group_ids'] = group_ids;
+
         try {
             var friend_request = await pool.query("SELECT request FROM friends WHERE user_id = $1 AND friend_id = $2", [
                 payload.user,

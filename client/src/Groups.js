@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
         }
     },
     head: {
-        backgroundColor: '#4A406C',
+        backgroundColor: '#ffa6a6',
         color: "white",
         "&:hover": {
             backgroundColor: "#f7196e",
@@ -148,8 +148,12 @@ const Groups = ({ setAuth }) => {
             setCreateGroup(0);
             setNewGroupName("");
             setNewGroupInfo("");
-        }
-        else {
+        } else if (newGroupName.length < 1) {
+            setErrorInput(3);
+            setCreateGroup(0);
+            setNewGroupName("");
+            setNewGroupInfo("");
+        } else {
             postGroupDetails(newGroupName, newGroupInfo);
         }
     }
@@ -199,27 +203,15 @@ const Groups = ({ setAuth }) => {
                 : 
                     null
             }
-            {/* <div className={classes.root}>
-                {createGroup === 0 ?
-                    <div className="groups__bar">
-                        <Button variant="contained" className={classes.head} onClick={() => setCreateGroup(1)}>Create New Group</Button>
-                    </div>
-                :   
-                    <div className="newGroup__top">                
-                        <form>
-                            <textarea
-                                value={newGroupName}
-                                onChange={e => setNewGroupName(e.target.value)} 
-                                className="newGroup__input" 
-                                rows="1" 
-                                cols="50" 
-                                placeholder={`Write group name here, ${name}. Group name must be less than 20 characters`}
-                            ></textarea>
-                            <button onClick={handleGroupNameSubmit} type="submit">Submit</button>
-                        </form>
-                    </div>
-                }
-            </div> */}
+            {errorInput === 3 ? 
+                    <div className={classes.root}>
+                        <h3 style={{marginBottom: '0px', display: 'flex', justifyContent: 'center', backgroundColor: '#d75b60', color: 'white'}}>
+                            ERROR: Your Group Name cannot be BLANK!
+                        </h3>
+                    </div> 
+                : 
+                    null
+            }
 
             <div className="groups__bar">
                 <Button variant="contained" className={classes.head} onClick={() => setCreateGroup(1)}>Create New Group</Button>
@@ -227,7 +219,7 @@ const Groups = ({ setAuth }) => {
                     <DialogTitle id="form-dialog-title">Create Group Here.</DialogTitle>
                     <div className={classes.edit}>
                     <DialogContentText>
-                        Your Group name must not be more than 20 characters.
+                        Your Group Name is required and must not be more than 20 characters.
                     </DialogContentText>
                     <TextField
                         autoFocus
@@ -236,6 +228,7 @@ const Groups = ({ setAuth }) => {
                         type="text"
                         label="Name" 
                         fullWidth
+                        required
                         onChange={e => setNewGroupName(e.target.value)}
                     />
                     <TextField
@@ -246,6 +239,7 @@ const Groups = ({ setAuth }) => {
                         label="Info" 
                         fullWidth
                         multiline
+                        required
                         rows={5}
                         rowsMax={5}
                         onChange={e => setNewGroupInfo(e.target.value)}
@@ -272,7 +266,7 @@ const Groups = ({ setAuth }) => {
             </div>
 
             <div className="groups__bar" style={{paddingTop: '0px'}}>
-                <textarea placeholder="Search for a group here">
+                <textarea placeholder="Search For A Group Here:">
 
                 </textarea>
             </div>

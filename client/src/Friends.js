@@ -131,6 +131,12 @@ const Friends = ({ setAuth }) => {
                 </Button>
             </div>
 
+            <div className="groups__bar" style={{paddingTop: '0px'}}>
+                <textarea placeholder="Search for a friend here">
+
+                </textarea>
+            </div>
+
             {toggleRequest ? 
                 <div className={classes.root}>
                     {/* <Typography variant="h5">Friend Requests:</Typography> */}

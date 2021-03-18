@@ -59,6 +59,7 @@ const OtherProfile = (props) => {
   const [inputInfo, setInputInfo] = useState("");
   const [groupJoined, setGroupJoined] = useState(null);
   const [profileIDs, setProfileIDs] = useState([]);
+  const [admin, setAdmin] = useState(false);
 
   const logout = (e) => {
     e.preventDefault();
@@ -115,6 +116,7 @@ const OtherProfile = (props) => {
       setGroupInfo(parseRes.group_info);
       setGroupJoined(parseRes.group_joined);
       setProfileIDs(parseRes.profile_ids);
+      setAdmin(parseRes.admin);
       // setInfo(parseRes.profile_info);
     } catch (err) {
       console.error(err.message);
@@ -298,31 +300,34 @@ const OtherProfile = (props) => {
         currentPage="asdf"
       />
       <div className="profile">
-        <div>
-            {groupJoined ? 
-                <Button onClick={() => leave(groupProfileID)}>Leave Group</Button>
-            :
-                <Button onClick={() => join(groupProfileID)}>Join Group</Button>
-            }
-        </div>
+        {!admin ? 
+          groupJoined ? 
+            <Button variant="contained" style={{backgroundColor: "#E27B66", color: "white"}} onClick={() => leave(groupProfileID)}>X Leave Group</Button>
+          :
+            <Button variant="contained" style={{backgroundColor: "#ffa6a6", color: "white"}} onClick={() => join(groupProfileID)}>✓ Join Group</Button>
+        : <Button variant="contained" style={{backgroundColor: '#d75b60', color: "white"}}>X Delete Group</Button>
+        }
         <div className={classes.root}>
           {groupPicture ? (
             <Avatar src={groupPicture} className={classes.large} />
           ) : (
             <Avatar className={classes.large} />
           )}
-          <IconButton className={classes.icon} onClick={upload}>
-            <EditIcon />
-            <input id='selectImage' hidden type="file" onChange={handleImageChange}/>
-          </IconButton>
+          {admin &&
+            <IconButton className={classes.icon} onClick={upload}>
+              <EditIcon />
+              <input id='selectImage' hidden type="file" onChange={handleImageChange}/>
+            </IconButton>
+          }
         </div>
         {editName === 0 ?
-            <div className={classes.root} style={{ marginLeft: "40px"}}>
+            <div className={classes.root} style={admin ? { marginLeft: "40px"} : null}>
                 <h1>{groupName}</h1>
-                    {/* <IconButton className={classes.small} onClick={upload}> */}
-                <IconButton id="name" className={classes.small} onClick={handleEditName}>
+                {admin && 
+                  <IconButton id="name" className={classes.small} onClick={handleEditName}>
                     <EditIcon />
-                </IconButton>
+                  </IconButton>
+                }
             </div>
             : 
             <div className="inviteSender__top">                
@@ -341,12 +346,14 @@ const OtherProfile = (props) => {
         }
                 
         {editInfo === 0 ?
-            <div className={classes.root} style={{ marginLeft: "40px", marginTop: "10px"}}>
+            <div className={classes.root} style={admin ? { marginLeft: "40px", marginTop: "10px"} : {marginTop: "10px"}}>
                 <h3>{groupInfo}</h3>
                     {/* <IconButton className={classes.small} onClick={upload}> */}
-                <IconButton id="name" className={classes.small} onClick={handleEditInfo}>
+                {admin &&
+                  <IconButton id="name" className={classes.small} onClick={handleEditInfo}>
                     <EditIcon />
-                </IconButton>
+                  </IconButton>
+                }
             </div>
             : 
             <div className="inviteSender__top">                

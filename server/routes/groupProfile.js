@@ -33,6 +33,10 @@ router.post('/get-details', async (req, res) => {
             req.body.id
         ]);
 
+        const admin = await pool.query("SELECT administrator FROM groups WHERE group_id = ($1)", [
+            req.body.id
+        ]);
+
         var profile_ids = [];
         for (var i=0; i<members.rows.length; i++) {
             profile_ids.push(members.rows[i].profile_id);
@@ -43,6 +47,12 @@ router.post('/get-details', async (req, res) => {
             group_profile.rows[0]["group_joined"] = false;
         } else {
             group_profile.rows[0]["group_joined"] = true;
+        }
+        
+        if (admin.rows[0].administrator !== payload.user) {
+            group_profile.rows[0]['admin'] = false;
+        } else {
+            group_profile.rows[0]['admin'] = true;
         }
 
         res.json(group_profile.rows[0]);
