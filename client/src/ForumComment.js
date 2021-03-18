@@ -139,7 +139,7 @@ const ForumComment = (props) => {
                         </p>
                         {numReplies > 0 &&
                             <p style={{cursor: "pointer", marginLeft: "30px", color: "#E27B66"}}>
-                                {numReplies} REPLIES
+                                {numReplies} {numReplies === 1 ? 'REPLY' : 'REPLIES'}
                             </p>
                         }
                     </div>
