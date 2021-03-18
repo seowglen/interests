@@ -48,6 +48,7 @@ const ProfileCard = ({ id }) => {
     const [name, setName] = useState("");
     const [groups, setGroups] = useState(0);
     const [picture, setPicture] = useState(null);
+    const [ownself, setOwnself] = useState(false);
 
     async function getName(id) {
         try {
@@ -64,6 +65,7 @@ const ProfileCard = ({ id }) => {
             console.log(parseRes);
             setName(parseRes.profile_name);
             setGroups(parseRes.number_groups);
+            setOwnself(parseRes.ownself);
             // setPicture(parseRes.profile_picture);
             // setInfo(parseRes.profile_info);
         } catch (err) {
@@ -102,7 +104,11 @@ const ProfileCard = ({ id }) => {
             </div>
             <Typography variant="h6" className={classes.profileName}>{name}</Typography>
             <div className={classes.otherName}>
-                <Typography variant="caption" color="textSecondary">{groups} {groups === 1 ? "Mutual Group" : "Mutual Groups"}</Typography>
+                {ownself ?
+                    <Typography variant="caption" color="textSecondary">You</Typography>
+                :
+                    <Typography variant="caption" color="textSecondary">{groups} {groups === 1 ? "Mutual Group" : "Mutual Groups"}</Typography>   
+                }
             </div>
             <Link to={{
                     pathname: '/otherProfile',

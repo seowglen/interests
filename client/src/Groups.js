@@ -4,11 +4,17 @@ import Header from './Header';
 import { Grid, Avatar, Divider, Typography, Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import GroupCard from './GroupCard';
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 const useStyles = makeStyles(theme => ({
     root: {
-        paddingLeft: theme.spacing(15),
-        paddingRight: theme.spacing(15)
+        paddingLeft: theme.spacing(14),
+        paddingRight: theme.spacing(14)
     },
     active: {
         backgroundColor: "#E27B66",
@@ -26,6 +32,10 @@ const useStyles = makeStyles(theme => ({
             color: "white"
         }
     },
+    edit: {
+        paddingLeft: '25px',
+        paddingRight: '25px'
+    }
 }));
 
 const Groups = ({ setAuth }) => {
@@ -37,6 +47,7 @@ const Groups = ({ setAuth }) => {
     const [otherGroupID, setOtherGroupID] = useState([]);
     const [createGroup, setCreateGroup] = useState(0);
     const [newGroupName, setNewGroupName] = useState('');
+    const [newGroupInfo, setNewGroupInfo] = useState('');
     const [errorInput, setErrorInput] = useState(0);
     const [toggleList, setToggleList] = useState(false);
     const [toggleConsider, setToggleConsider] = useState(false);
@@ -94,7 +105,7 @@ const Groups = ({ setAuth }) => {
         }
     }
 
-    async function postGroupName(data) {
+    async function postGroupDetails(name, info) {
         try {
             const response = await fetch('http://localhost:5000/groups/postName/', {
                 method: "POST",
@@ -103,35 +114,50 @@ const Groups = ({ setAuth }) => {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    name: data 
+                    name: name,
+                    info: info 
                 })
             });
 
             const parseRes = await response.json();
             if (parseRes.err) {
                 setErrorInput(2);
+                setCreateGroup(0);
                 setNewGroupName("");
+                setNewGroupInfo("");
             } else {
                 setGroupID([parseRes.group_id, ...groupID]);
                 setErrorInput(0);
                 setCreateGroup(0);
                 setNewGroupName("");
+                setNewGroupInfo("");
+                if (toggleConsider) {
+                    setToggleConsider(false);
+                    setToggleList(true);
+                }
             }
         } catch (err) {
             console.error(err.message);
         }
     }
 
-    function handleGroupNameSubmit(e) {
-        e.preventDefault();
+    function handleGroupSubmit() {
+        
         if (newGroupName.length > 20) {
             setErrorInput(1);
+            setCreateGroup(0);
             setNewGroupName("");
+            setNewGroupInfo("");
         }
         else {
-            console.log(newGroupName);
-            postGroupName(newGroupName);
+            postGroupDetails(newGroupName, newGroupInfo);
         }
+    }
+
+    function handleGroupClose() {
+        setCreateGroup(0);
+        setNewGroupName("");
+        setNewGroupInfo("");
     }
 
     function handleList() {
@@ -157,19 +183,23 @@ const Groups = ({ setAuth }) => {
             {/* <Button onClick={() => accept(userProfileID)}>Accept</Button> */}
             {errorInput === 1 ? 
                     <div className={classes.root}>
-                        <h3>Your group name must NOT be more than 20 characters!</h3>
+                        <h3 style={{marginBottom: '0px', display: 'flex', justifyContent: 'center', backgroundColor: '#d75b60', color: 'white'}}>
+                            ERROR: Group Name has more than 20 Characters
+                        </h3>
                     </div> 
                 : 
                     null
             }
             {errorInput === 2 ? 
                     <div className={classes.root}>
-                        <h3>Group already exists! Please enter a new group name.</h3>
+                        <h3 style={{marginBottom: '0px', display: 'flex', justifyContent: 'center', backgroundColor: '#d75b60', color: 'white'}}>
+                            ERROR: Group Name already exists!
+                        </h3>
                     </div> 
                 : 
                     null
             }
-            <div className={classes.root}>
+            {/* <div className={classes.root}>
                 {createGroup === 0 ?
                     <div className="groups__bar">
                         <Button variant="contained" className={classes.head} onClick={() => setCreateGroup(1)}>Create New Group</Button>
@@ -189,6 +219,47 @@ const Groups = ({ setAuth }) => {
                         </form>
                     </div>
                 }
+            </div> */}
+
+            <div className="groups__bar">
+                <Button variant="contained" className={classes.head} onClick={() => setCreateGroup(1)}>Create New Group</Button>
+                <Dialog open={createGroup} onClose={handleGroupClose} aria-labelledby="form-dialog-title" fullWidth maxWidth="sm">
+                    <DialogTitle id="form-dialog-title">Create Group Here.</DialogTitle>
+                    <div className={classes.edit}>
+                    <DialogContentText>
+                        Your Group name must not be more than 20 characters.
+                    </DialogContentText>
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        id="name"
+                        type="text"
+                        label="Name" 
+                        fullWidth
+                        onChange={e => setNewGroupName(e.target.value)}
+                    />
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        id="info"
+                        type="text"
+                        label="Info" 
+                        fullWidth
+                        multiline
+                        rows={5}
+                        rowsMax={5}
+                        onChange={e => setNewGroupInfo(e.target.value)}
+                    />
+                    </div>
+                    <DialogActions>
+                        <Button onClick={handleGroupClose} color="primary">
+                            Cancel
+                        </Button>
+                        <Button onClick={handleGroupSubmit} color="primary">
+                            Create
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </div>
 
             <div className="groups__bar__options">
@@ -198,6 +269,12 @@ const Groups = ({ setAuth }) => {
                 <Button variant="contained" className={(toggleConsider ? classes.active : '')} onClick={() => handleConsider()}>
                     Groups To Consider ({otherGroupID.length})
                 </Button>
+            </div>
+
+            <div className="groups__bar" style={{paddingTop: '0px'}}>
+                <textarea placeholder="Search for a group here">
+
+                </textarea>
             </div>
             
             {toggleList ? 

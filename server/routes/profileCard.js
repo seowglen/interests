@@ -30,9 +30,20 @@ router.post('/get-name', async (req, res) => {
             req.body.id
         ]);
 
+        const user_id = await pool.query(
+            "SELECT user_id FROM users WHERE profile_id = $1", [
+                req.body.id
+            ]
+        );
+        
+        var bool = false;
+        if (user_id.rows[0].user_id === payload.user) {
+            bool = true;
+        } 
         const response = {
             profile_name: profile_name.rows[0].profile_name,
-            number_groups: groups.rows.length
+            number_groups: groups.rows.length,
+            ownself: bool
         }
 
         res.json(response);

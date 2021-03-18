@@ -17,6 +17,11 @@
     padding: 25px 0px
 }
 
+.groups__bar > textarea {
+    width: 20%;
+    height: 25px;
+}
+
 .groups__bar__options {
     display: flex;
     flex: 1;

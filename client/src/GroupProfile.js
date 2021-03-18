@@ -254,6 +254,7 @@ const OtherProfile = (props) => {
         });
         const parseRes = await response.json();
         setGroupJoined(true);
+        setProfileIDs([parseRes.profile_id, ...profileIDs]);
     } catch (err) {
         console.error(err.message);
     }
@@ -273,6 +274,7 @@ const OtherProfile = (props) => {
         });
         const parseRes = await response.json();
         setGroupJoined(false);
+        setProfileIDs(profileIDs.filter(profileID => profileID !== parseRes.profile_id));
     } catch (err) {
         console.error(err.message);
     }

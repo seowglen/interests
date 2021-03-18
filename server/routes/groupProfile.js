@@ -178,7 +178,11 @@ router.post('/join-group', async (req, res) => {
             req.body.id
         ])
 
-        res.json({ result });
+        const profile_id = await pool.query("SELECT profile_id FROM users WHERE user_id = ($1)", [
+            payload.user
+        ]);
+
+        res.json(profile_id.rows[0]);
 
     } catch (err) {
         console.error(err.message);
@@ -200,9 +204,13 @@ router.post('/leave-group', async (req, res) => {
         const result = await pool.query("DELETE FROM user_group WHERE user_id = ($1) AND group_id = ($2)", [
             payload.user,
             req.body.id
-        ])
+        ]);
 
-        res.json({ result });
+        const profile_id = await pool.query("SELECT profile_id FROM users WHERE user_id = ($1)", [
+            payload.user
+        ]);
+
+        res.json(profile_id.rows[0]);
 
     } catch (err) {
         console.error(err.message);

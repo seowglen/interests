@@ -94,8 +94,9 @@ router.post('/postName', async (req, res) => {
             var err = "Group already exists";
             return res.json({err: err});
         } else {
-            const group_id = await pool.query("INSERT INTO groups (group_name) VALUES ($1) RETURNING group_id", [
-                req.body.name
+            const group_id = await pool.query("INSERT INTO groups (group_name, group_info) VALUES ($1, $2) RETURNING group_id", [
+                req.body.name,
+                req.body.info
             ]);
 
             await pool.query("INSERT INTO user_group (user_id, group_id) VALUES ($1, $2)", [
