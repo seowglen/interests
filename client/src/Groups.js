@@ -265,11 +265,6 @@ const Groups = ({ setAuth }) => {
                 </Button>
             </div>
 
-            <div className="groups__bar" style={{paddingTop: '0px'}}>
-                <textarea placeholder="Search For A Group Here:">
-
-                </textarea>
-            </div>
             
             {toggleList ? 
                 <div className={classes.root}>

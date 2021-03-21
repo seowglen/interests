@@ -386,7 +386,7 @@ const Post = (props) => {
                         <DialogContent>
                             {likesNames.map(names => (
                                 <DialogContentText>
-                                    {names}
+                                    👍 {names}
                                 </DialogContentText>
                             ))}
                         </DialogContent>

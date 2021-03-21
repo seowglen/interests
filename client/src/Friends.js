@@ -48,11 +48,8 @@ const Friends = ({ setAuth }) => {
                 method: "GET",
                 headers: {token: localStorage.token}
             });
-            
             const parseRes = await response.json();
             setName(parseRes.profile_name);
-            // setPicture(parseRes.profile_picture);
-            // setInfo(parseRes.profile_info);
         } catch (err) {
             console.error(err.message);
         }
@@ -131,11 +128,11 @@ const Friends = ({ setAuth }) => {
                 </Button>
             </div>
 
-            <div className="groups__bar" style={{paddingTop: '0px'}}>
+            {/* <div className="groups__bar" style={{paddingTop: '0px'}}>
                 <textarea placeholder="Search for a friend here">
 
                 </textarea>
-            </div>
+            </div> */}
 
             {toggleRequest ? 
                 <div className={classes.root}>

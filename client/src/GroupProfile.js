@@ -297,7 +297,7 @@ const OtherProfile = (props) => {
         picture={picture}
         setAuth={props.setAuth}
         logout={logout}
-        currentPage="asdf"
+        currentPage="groups"
       />
       <div className="profile">
         {!admin ? 
@@ -305,7 +305,7 @@ const OtherProfile = (props) => {
             <Button variant="contained" style={{backgroundColor: "#E27B66", color: "white"}} onClick={() => leave(groupProfileID)}>X Leave Group</Button>
           :
             <Button variant="contained" style={{backgroundColor: "#ffa6a6", color: "white"}} onClick={() => join(groupProfileID)}>✓ Join Group</Button>
-        : <Button variant="contained" style={{backgroundColor: '#d75b60', color: "white"}}>X Delete Group</Button>
+        : null
         }
         <div className={classes.root}>
           {groupPicture ? (

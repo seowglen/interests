@@ -10,6 +10,9 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import ForumPostPreview from './ForumPostPreview';
+import { Menu, MenuItem } from '@material-ui/core';
+import Select from '@material-ui/core/Select';
+import InputLabel from '@material-ui/core/InputLabel';
 
 const Forum = ({ setAuth }) => {
 
@@ -125,6 +128,12 @@ const Forum = ({ setAuth }) => {
                     <DialogContentText>
                         Create a Forum Post either to introduce yourself, or talk about anything!
                     </DialogContentText>
+                    <Select
+                        native
+                    >
+                    <option value={10}>Music</option>
+                    <option value={20}>SG Hockey</option>
+                    </Select>
                     <TextField
                         autoFocus
                         margin="dense"

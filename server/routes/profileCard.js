@@ -35,6 +35,10 @@ router.post('/get-name', async (req, res) => {
                 req.body.id
             ]
         );
+
+        // const admin = await pool.query(
+        //     "SELECT "
+        // )
         
         var bool = false;
         if (user_id.rows[0].user_id === payload.user) {

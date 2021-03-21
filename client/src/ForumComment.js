@@ -135,6 +135,12 @@ const ForumComment = (props) => {
                     </div>
                     <div className="forum__reply">
                         <p style={{cursor: "pointer"}} onClick={handleClickOpen}>
+                            EDIT
+                        </p>
+                        <p style={{cursor: "pointer", marginLeft: "30px"}} onClick={handleClickOpen}>
+                            DELETE
+                        </p>
+                        <p style={{cursor: "pointer", marginLeft: "30px"}} onClick={handleClickOpen}>
                             REPLY
                         </p>
                         {numReplies > 0 &&

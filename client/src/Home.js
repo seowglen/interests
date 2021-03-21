@@ -138,7 +138,7 @@ const Home = ({ setAuth }) => {
                                 className="inviteSender__input" 
                                 rows="1" 
                                 cols="50" 
-                                placeholder={placeholder ? `${placeholder}` : `Post an invite, or write what's on your mind here, ${name}.`}
+                                placeholder={placeholder ? `${placeholder}` : `Write something to your group here, ${name}.`}
                             ></textarea>
                             
                             <select value={category} onChange={e => handleCategoryChange(e.target.value)}>

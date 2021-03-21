@@ -111,7 +111,7 @@ const GroupCard = ({ id }) => {
             }} style={{ textDecoration: 'none', color: 'white' }}>
                 <Button className={classes.profileButton} disableElevation variant="contained" size="small">
                     Profile
-                </Button>
+                </Button> 
             </Link>
         </Grid>
     )

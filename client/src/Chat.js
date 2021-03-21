@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './Chat.css';
 import Header from './Header';
 import ChatRoom from './ChatRoom';
+import img from './Simplified Logo (font rasterized).png';
 
 const Chat = ({ setAuth }) => {
 
@@ -74,6 +75,7 @@ const Chat = ({ setAuth }) => {
                 <div className="joinInnerContainer">
                     {!toggle ? 
                         <div className="chatIntro">
+                            <img src={img} alt='' style={{objectFit: "contain", height: "100px", marginBottom: "25px"}}></img>
                             <h1>Welcome to the Chat page</h1>
                             <p>Talk to people in your group in real-time here</p>
                             <p>NOTE: We do not save any form of data posted in the chat.</p>

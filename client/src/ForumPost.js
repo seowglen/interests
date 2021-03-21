@@ -3,10 +3,20 @@ import Header from "./Header";
 import "./ForumPost.css";
 import { Avatar } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import { Button } from "@material-ui/core";
+import { Button, Typography} from "@material-ui/core";
 import ForumComments from './ForumComments';
 
+const useStyles = makeStyles((theme) => ({
+  comments: {
+    paddingLeft: theme.spacing(20),
+    paddingRight: theme.spacing(20),
+    backgroundColor: "#fffffb",
+    borderBottom: "black"
+  }
+}));
+
 const ForumPost = (props) => {
+    const classes = useStyles();
     // props.location.idProps.id returns id in string
     const [id, setId] = useState('');
     const [name, setName] = useState('');
@@ -139,7 +149,6 @@ const ForumPost = (props) => {
                 </div>
                 {/* <div className="forumPost__right"></div> */}
             </div>
-
             <ForumComments id={id} comments={commentIds} updateComment={updateComment}/>
         </div>
     )
