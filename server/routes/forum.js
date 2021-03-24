@@ -50,11 +50,21 @@ router.get('/get-photo', authorization, async (req, res) => {
 router.get('/get-ids', authorization, async (req, res) => {
     try {
         const forum_post_ids = []
-        const forum_posts = await pool.query("SELECT (forum_post_id) FROM forum_posts ORDER BY time_stamp DESC");
+        const forum_posts = await pool.query("SELECT (forum_post_id) FROM forum_posts WHERE group_id IN (SELECT group_id FROM user_group WHERE user_id = ($1)) ORDER BY time_stamp DESC", [
+            req.user
+        ]);
         for (var i = 0; i < forum_posts.rows.length; i++) {
             forum_post_ids.push(forum_posts.rows[i].forum_post_id);
         }
-        res.json({ forum_post_ids });
+
+        const group_names = []
+        const groups = await pool.query("SELECT group_name FROM groups WHERE group_id IN (SELECT group_id FROM user_group WHERE user_id = ($1))", [
+            req.user
+        ]);
+        for (var i = 0; i < groups.rows.length; i++) {
+            group_names.push(groups.rows[i].group_name);
+        }
+        res.json({ forum_post_ids: forum_post_ids, group_names: group_names });
 
     } catch (err) {
         console.error(err.message);
@@ -72,13 +82,19 @@ router.post('/create-post', async (req, res) => {
 
         const payload = jwt.verify(jwtToken, process.env.jwtSecret);
 
+        const group_id = await pool.query(
+            "SELECT group_id FROM groups WHERE group_name = ($1)",[
+            req.body.group
+        ]);
+
         const post_id = await pool.query(
-            "INSERT INTO forum_posts (user_id, time_stamp, forum_title, forum_post, view_count) VALUES ($1, to_timestamp($2), $3, $4, $5) RETURNING forum_post_id", [
+            "INSERT INTO forum_posts (user_id, time_stamp, forum_title, forum_post, view_count, group_id) VALUES ($1, to_timestamp($2), $3, $4, $5, $6) RETURNING forum_post_id", [
             payload.user,
             (Date.now() / 1000.0),
             req.body.title,
             req.body.post,
-            0
+            0,
+            group_id.rows[0].group_id
         ]);
 
         const new_post_id = post_id.rows[0];
@@ -129,6 +145,11 @@ router.post('/get-forum-details', async (req, res) => {
             req.body.id
         ]);
 
+        const group_name = await pool.query(
+            "SELECT group_name FROM groups WHERE group_id IN (SELECT group_id FROM forum_posts WHERE forum_post_id = ($1))", [
+            req.body.id
+        ]);
+
         const profile = await pool.query(
             "SELECT profile_id, profile_name FROM profile WHERE profile_id IN (SELECT profile_id FROM users WHERE user_id IN (SELECT user_id FROM forum_posts WHERE forum_post_id = $1))", [
             req.body.id
@@ -137,6 +158,8 @@ router.post('/get-forum-details', async (req, res) => {
         const comments = await pool.query("SELECT * FROM forum_comments WHERE forum_post_id = $1",[
             req.body.id    
         ]);
+
+        post.rows[0]['group_name'] = group_name.rows[0].group_name;
 
         if (comments === null) {
             post.rows[0]['comment_count'] = 0;

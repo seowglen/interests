@@ -12,6 +12,7 @@ const ForumPostPreview = ({ id }) => {
     const [commentCount, setCommentCount] = useState('');
     const [timestamp, setTimestamp] = useState('');
     const [viewCount, setViewCount] = useState('');
+    const [groupName, setGroupName] = useState('');
 
     async function getPhoto(data) {
         try {
@@ -50,6 +51,7 @@ const ForumPostPreview = ({ id }) => {
             setViewCount(parseRes.view_count);
             setUser(parseRes.profile_name);
             setTitle(parseRes.forum_title);
+            setGroupName(parseRes.group_name);
             // setInfo(parseRes.profile_info);
         } catch (err) {
             console.error(err.message);
@@ -80,7 +82,7 @@ const ForumPostPreview = ({ id }) => {
                 </Link>
                 </h3>
                 <span className="forumPost__info">
-                    submitted by {user}, {timestamp}
+                    submitted by {user} ({groupName}), {timestamp}
                 </span>
                 <p>
                     {viewCount} views, {commentCount} comments

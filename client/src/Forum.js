@@ -22,6 +22,8 @@ const Forum = ({ setAuth }) => {
     const [post, setPost] = useState('');
     const [postIds, setPostIds] = useState([]);
     const [open, setOpen] = React.useState(false);
+    const [groupNames, setGroupNames] = useState([]);
+    const [category, setCategory] = useState('');
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -33,7 +35,7 @@ const Forum = ({ setAuth }) => {
 
     const handleCreate = () => {
         setOpen(false);
-        createPost(title, post)
+        createPost(title, post, category)
     };
 
     const logout = (e) => {
@@ -82,12 +84,14 @@ const Forum = ({ setAuth }) => {
             
             const parseRes = await response.json();
             setPostIds(parseRes.forum_post_ids);
+            setGroupNames(parseRes.group_names);
+            setCategory(parseRes.group_names[0]);
         } catch (err) {
             console.error(err.message);
         }
     }
 
-    async function createPost(title, post) {
+    async function createPost(title, post, group) {
         try {
             const response = await fetch('http://localhost:5000/forum/create-post', {
                 method: "POST",
@@ -97,7 +101,8 @@ const Forum = ({ setAuth }) => {
                 },
                 body: JSON.stringify({ 
                     title: title,
-                    post: post 
+                    post: post,
+                    group: group 
                 })
             });
             const parseRes = await response.json();
@@ -130,9 +135,12 @@ const Forum = ({ setAuth }) => {
                     </DialogContentText>
                     <Select
                         native
+                        value={category} 
+                        onChange={e => setCategory(e.target.value)}
                     >
-                    <option value={10}>Music</option>
-                    <option value={20}>SG Hockey</option>
+                        {groupNames.map(name => (
+                            <option>{name}</option>
+                        ))}
                     </Select>
                     <TextField
                         autoFocus
