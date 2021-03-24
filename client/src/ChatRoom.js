@@ -17,28 +17,22 @@ const ChatRoom = (props) => {
     const [messages, setMessages] = useState([]);
     const [users, setUsers] = useState('');
     
-    //asdf
+    
     useEffect(() => {
         socket = io(ENDPOINT, { rememberTransport: false, transport : ['websocket'] });
-
         setName(props.userName);
         setRoom(props.roomName);
-        
         socket.emit('join', {name: props.userName, room: props.roomName});
-
         return () => {
             socket.emit('disconnected');
             socket.off();
         }
-        //asdfasdfsda
-
     }, [ENDPOINT, props.userName, props.roomName]);
 
     useEffect(() => {
         socket.on('message', (message) => {
             setMessages(messages => [...messages, message]);
         })
-
         socket.on("roomData", ({ users }) => {
             setUsers(users);
         });

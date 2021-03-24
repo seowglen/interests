@@ -144,7 +144,7 @@ const ForumComment = (props) => {
                             REPLY
                         </p>
                         {numReplies > 0 &&
-                            <p style={{cursor: "pointer", marginLeft: "30px", color: "#E27B66"}}>
+                            <p style={{cursor: "pointer", marginLeft: "30px", color: "#E27B66"}} onClick={() => props.handleToggle(props.comment.forum_comment_id)}>
                                 {numReplies} {numReplies === 1 ? 'REPLY' : 'REPLIES'}
                             </p>
                         }

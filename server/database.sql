@@ -102,7 +102,7 @@ CREATE TABLE users (
 	user_email varchar(255) NOT NULL,
 	user_password varchar(255) NOT NULL,
 	profile_id uuid UNIQUE,
-  FOREIGN KEY (profile_id) REFERENCES profile (profile_id)
+  	FOREIGN KEY (profile_id) REFERENCES profile (profile_id)
 );
 
 CREATE TABLE profile (
@@ -153,12 +153,6 @@ CREATE TABLE forum_comments (
 	FOREIGN KEY (forum_post_id) REFERENCES forum_posts (forum_post_id)
 );
 
--- INSERT INTO posts (user_id, time_stamp, post)
--- VALUES ('678fde77-6d41-4228-905d-0360ca10c922', to_timestamp(1610907548), 'Whats up fam boiisssss')
-
--- INSERT INTO comments (post_id, user_id, time_stamp, comment)
--- VALUES ('e6584f5e-6eb4-4321-b741-101406dec46d', '678fde77-6d41-4228-905d-0360ca10c922', to_timestamp(1610911433), 'Sell it for $1 and we good fam')
-
 CREATE TABLE likes (
 	like_id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
 	post_id uuid NOT NULL,
@@ -181,7 +175,9 @@ CREATE TABLE groups(
 	group_id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
 	group_name varchar(255),
 	group_picture varchar(761),
-	group_info varchar(3071)
+	group_info varchar(3071),
+	administrator uuid NOT NULL,
+	FOREIGN KEY (administrator) REFERENCES users (user_id)
 );
 
 CREATE TABLE user_group (

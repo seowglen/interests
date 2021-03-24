@@ -15,6 +15,7 @@ const ForumComments = (props) => {
 
     const [open, setOpen] = React.useState(false);
     const [comment, setComment] = useState("");
+    const [displayRepliesFor, setDisplayRepliesFor] = useState([]);
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -28,6 +29,14 @@ const ForumComments = (props) => {
         setOpen(false);
         createComment(props.id, comment);
     };
+
+    const handleToggle = (comment_id) => {
+        if (displayRepliesFor.includes(comment_id)) {
+            setDisplayRepliesFor(displayRepliesFor.filter(comment => comment !== comment_id));
+        } else {
+            setDisplayRepliesFor([...displayRepliesFor, comment_id]);
+        }
+    }
 
     async function createComment(id, data) {
         try {
@@ -61,8 +70,10 @@ const ForumComments = (props) => {
                 {props.comments && props.comments.map((comment) => (
                     (!comment.parent_comment_id &&
                         <div>
-                            <ForumComment comments={props.comments} comment={comment} id={props.id} updateComment={props.updateComment}/>
-                            <ReplyComment comments={props.comments} id={props.id} parentCommentId={comment.forum_comment_id} updateComment={props.updateComment}/>
+                            <ForumComment comments={props.comments} comment={comment} id={props.id} updateComment={props.updateComment} handleToggle={handleToggle}/>
+                            {displayRepliesFor.includes(comment.forum_comment_id) && 
+                                <ReplyComment comments={props.comments} id={props.id} parentCommentId={comment.forum_comment_id} updateComment={props.updateComment}/>
+                            }
                         </div>
                     )
                 ))}

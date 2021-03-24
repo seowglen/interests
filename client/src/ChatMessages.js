@@ -14,5 +14,4 @@ const ChatMessages= (props) => {
         </ScrollToBottom>
     )
 }
-
 export default ChatMessages;
