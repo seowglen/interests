@@ -268,6 +268,12 @@ router.post('/get-name-user', async (req, res) => {
             req.body.id
         ]);
 
+        if (req.body.id !== payload.user) {
+            profile_name.rows[0]['ownself'] = false;
+        } else {
+            profile_name.rows[0]['ownself'] = true;
+        }
+
         res.json(profile_name.rows[0]);
 
     } catch (err) {

@@ -17,6 +17,7 @@ const ForumComment = (props) => {
     const [userName, setUserName] = useState("");
     const [reply, setReply] = useState("");
     const [numReplies, setNumReplies] = useState(0);
+    const [ownself, setOwnself] = useState(false);
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -83,6 +84,7 @@ const ForumComment = (props) => {
     
           const parseRes = await response.json();
           setUserName(parseRes.profile_name);
+          setOwnself(parseRes.ownself);
           // setInfo(parseRes.profile_info);
         } catch (err) {
           console.error(err.message);
@@ -134,13 +136,17 @@ const ForumComment = (props) => {
                         </pre>
                     </div>
                     <div className="forum__reply">
-                        <p style={{cursor: "pointer"}} onClick={handleClickOpen}>
-                            EDIT
-                        </p>
-                        <p style={{cursor: "pointer", marginLeft: "30px"}} onClick={handleClickOpen}>
-                            DELETE
-                        </p>
-                        <p style={{cursor: "pointer", marginLeft: "30px"}} onClick={handleClickOpen}>
+                        {ownself &&
+                            <p style={{cursor: "pointer"}} onClick={handleClickOpen}>
+                                EDIT
+                            </p>
+                        }
+                        {ownself &&    
+                            <p style={{cursor: "pointer", marginLeft: "30px"}} onClick={handleClickOpen}>
+                                DELETE
+                            </p>
+                        }
+                        <p style={ownself ? {cursor: "pointer", marginLeft: "30px"} : {cursor: "pointer"}} onClick={handleClickOpen}>
                             REPLY
                         </p>
                         {numReplies > 0 &&
