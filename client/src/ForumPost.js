@@ -114,6 +114,10 @@ const ForumPost = (props) => {
       setCommentIds(commentIds.concat(newComment));
     }
 
+    function deleteComment(comment_ids_deleted) {
+      setCommentIds(commentIds.filter(commentId => !comment_ids_deleted.includes(commentId.forum_comment_id)))
+    }
+
     useEffect(() => {
         getDetails();
         getPhoto();
@@ -149,7 +153,7 @@ const ForumPost = (props) => {
                 </div>
                 {/* <div className="forumPost__right"></div> */}
             </div>
-            <ForumComments id={id} comments={commentIds} updateComment={updateComment}/>
+            <ForumComments id={id} comments={commentIds} updateComment={updateComment} deleteComment={deleteComment}/>
         </div>
     )
 }

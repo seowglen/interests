@@ -334,4 +334,52 @@ router.post('/create-reply', async (req, res) => {
     }
 });
 
+router.post('/delete-comment', async (req, res) => {
+    try {
+        const jwtToken = req.header("token");
+
+        if (!jwtToken) {
+            return res.status(403).json("Not Authorized");
+        }
+
+        const payload = jwt.verify(jwtToken, process.env.jwtSecret);
+
+        const comment_id = await pool.query(
+            `
+            DELETE FROM forum_comments
+            WHERE forum_comment_id IN (
+                WITH RECURSIVE CommentCTE AS (
+                    SELECT forum_comment_id, parent_comment_id, user_id, forum_post_id,
+                        lpad(forum_comment_id::text, 4) sort_key
+                    FROM forum_comments
+                    WHERE forum_comment_id = ($1)
+        
+                    UNION ALL
+        
+                    SELECT child.forum_comment_id, child.parent_comment_id, child.user_id, child.forum_post_id,
+                        concat(CommentCTE.sort_key, ':', lpad(child.forum_comment_id::text, 4))
+                    FROM forum_comments child 
+                    JOIN CommentCTE
+                    ON child.parent_comment_id = CommentCTE.forum_comment_id
+                )
+                SELECT forum_comment_id FROM CommentCTE
+            ) RETURNING forum_comment_id
+            `,
+            [req.body.comment_id]
+        );
+        
+        var comment_id_deleted = []
+        for (var i=0; i<comment_id.rows.length; i++) {
+            comment_id_deleted.push(comment_id.rows[i].forum_comment_id)
+        }
+
+        res.json({ comment_id_deleted });
+
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json("Server Error");
+    }
+});
+
+
 module.exports = router;

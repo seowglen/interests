@@ -9,10 +9,26 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import { makeStyles } from '@material-ui/core/styles';
+
+const useStyles = makeStyles((theme) => ({
+    small: {
+      width: theme.spacing(2.5),
+      height: theme.spacing(2.5),
+      color: '#A9A9A9',
+      cursor: "pointer",
+      "&:hover": { color: "#808080" },
+    },
+    edit: {
+        paddingLeft: '25px',
+        paddingRight: '25px'
+    }
+}));
 
 const ForumComment = (props) => {
 
     const [open, setOpen] = React.useState(false);
+    const [openDelete, setOpenDelete] = useState(false);
     const [userPicture, setUserPicture] = useState(null);
     const [userName, setUserName] = useState("");
     const [reply, setReply] = useState("");
@@ -23,14 +39,27 @@ const ForumComment = (props) => {
         setOpen(true);
     };
 
+    const handleClickOpenDelete = () => {
+        setOpenDelete(true);
+    }
+
     const handleClose = () => {
         setOpen(false);
+    };
+
+    const handleCloseDelete = () => {
+        setOpenDelete(false);
     };
 
     const handleCreate = () => {
         setOpen(false);
         createReply(props.comment.forum_post_id, reply, props.comment.forum_comment_id);
     };
+
+    const handleDelete = () => {
+        deleteComment(props.comment.forum_comment_id);
+        setOpenDelete(false);
+    }
 
     function getNumberReplies(comments, current_comment_id) {
         let replyCount = 0;
@@ -110,6 +139,29 @@ const ForumComment = (props) => {
         }
     }
 
+    async function deleteComment(comment_id) {
+        try {
+            const response = await fetch(
+              "http://localhost:5000/forum/delete-comment",
+              {
+                method: "POST",
+                headers: {
+                  token: localStorage.token,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ 
+                    comment_id: comment_id 
+                }),
+              }
+            );
+      
+            const parseRes = await response.json();
+            props.deleteComment(parseRes.comment_id_deleted);
+        } catch (err) {
+            console.error(err.message);
+        }
+    }
+
     useEffect(() => {
         getNameUser(props.comment.user_id);
         getPhotoUser(props.comment.user_id);
@@ -136,16 +188,27 @@ const ForumComment = (props) => {
                         </pre>
                     </div>
                     <div className="forum__reply">
-                        {ownself &&
-                            <p style={{cursor: "pointer"}} onClick={handleClickOpen}>
-                                EDIT
-                            </p>
-                        }
                         {ownself &&    
-                            <p style={{cursor: "pointer", marginLeft: "30px"}} onClick={handleClickOpen}>
+                            <p style={{cursor: "pointer"}} onClick={handleClickOpenDelete}>
                                 DELETE
                             </p>
                         }
+                        <Dialog open={openDelete} onClose={handleCloseDelete} aria-labelledby="form-dialog-title" fullWidth maxWidth="sm">
+                            <DialogTitle id="form-dialog-title">Are you sure you want to delete this comment?</DialogTitle>
+                                <DialogContent>
+                                    <DialogContentText>
+                                        All subsequent replies to this comment will be deleted as well.
+                                    </DialogContentText>                            
+                                </DialogContent>
+                                <DialogActions>
+                                    <Button onClick={handleCloseDelete} color="primary">
+                                        Cancel
+                                    </Button>
+                                    <Button onClick={handleDelete} color="primary">
+                                        Delete
+                                    </Button>
+                            </DialogActions>
+                        </Dialog>
                         <p style={ownself ? {cursor: "pointer", marginLeft: "30px"} : {cursor: "pointer"}} onClick={handleClickOpen}>
                             REPLY
                         </p>
