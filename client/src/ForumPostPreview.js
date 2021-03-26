@@ -2,9 +2,29 @@ import React, { useState, useEffect } from 'react';
 import { Avatar, Grid } from '@material-ui/core';
 import './Forum.css';
 import { Link } from 'react-router-dom';
+import DeleteIcon from '@material-ui/icons/Delete';
+import { makeStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
-const ForumPostPreview = ({ id }) => {
+const useStyles = makeStyles((theme) => ({
+    small: {
+      width: theme.spacing(2.5),
+      height: theme.spacing(2.5),
+      color: '#A9A9A9',
+      cursor: "pointer",
+      "&:hover": { color: "#808080" },
+    }
+}));
 
+const ForumPostPreview = ({ id, removePost }) => {
+
+    const classes = useStyles();
     const [postId, setPostId] = useState('');
     const [user, setUser] = useState('');
     const [title, setTitle] = useState('');
@@ -13,6 +33,21 @@ const ForumPostPreview = ({ id }) => {
     const [timestamp, setTimestamp] = useState('');
     const [viewCount, setViewCount] = useState('');
     const [groupName, setGroupName] = useState('');
+    const [ownself, setOwnself] = useState(false);
+    const [openDelete, setOpenDelete] = useState(false);
+
+    const handleClickOpenDelete = () => {
+        setOpenDelete(true);
+    }
+
+    const handleCloseDelete = () => {
+        setOpenDelete(false);
+    };
+
+    const handleDelete = () => {
+        deletePost(id);
+        setOpenDelete(false);
+    }
 
     async function getPhoto(data) {
         try {
@@ -52,7 +87,31 @@ const ForumPostPreview = ({ id }) => {
             setUser(parseRes.profile_name);
             setTitle(parseRes.forum_title);
             setGroupName(parseRes.group_name);
+            setOwnself(parseRes.ownself);
             // setInfo(parseRes.profile_info);
+        } catch (err) {
+            console.error(err.message);
+        }
+    }
+
+    async function deletePost(post_id) {
+        try {
+            const response = await fetch(
+              "http://localhost:5000/forum/delete-post",
+              {
+                method: "POST",
+                headers: {
+                  token: localStorage.token,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ 
+                    id: post_id 
+                }),
+              }
+            );
+      
+            const parseRes = await response.json();
+            removePost(parseRes.forum_post_id);
         } catch (err) {
             console.error(err.message);
         }
@@ -71,16 +130,37 @@ const ForumPostPreview = ({ id }) => {
                 <Avatar src={picture}/>
             </div>
             <div className="forumPost__center">
-                <h3>
-                <Link to={{
-                    pathname: '/forumPost',
-                    idProps: {
-                        id: postId
+                <div style={{display: "flex", justifyContent: "space-between"}}>
+                    <h3 style={{marginBottom: "5px"}}>
+                        <Link to={{
+                            pathname: '/forumPost',
+                                idProps: {
+                                    id: postId
+                                }
+                            }} style={{ textDecoration: 'none'}}>
+                            {title}
+                        </Link>
+                    </h3>
+                    {ownself &&
+                        <DeleteIcon className={classes.small} style={{marginTop: "15px"}} onClick={handleClickOpenDelete}/>
                     }
-                }} style={{ textDecoration: 'none'}}>
-                    {title}
-                </Link>
-                </h3>
+                    <Dialog open={openDelete} onClose={handleCloseDelete} aria-labelledby="form-dialog-title" fullWidth maxWidth="sm">
+                        <DialogTitle id="form-dialog-title">Are you sure you want to delete this post?</DialogTitle>
+                            <DialogContent>
+                                <DialogContentText>
+                                    All comments to this post will be deleted as well.
+                                </DialogContentText>                            
+                            </DialogContent>
+                            <DialogActions>
+                                <Button onClick={handleCloseDelete} color="primary">
+                                    Cancel
+                                </Button>
+                                <Button onClick={handleDelete} color="primary">
+                                    Delete
+                                </Button>
+                        </DialogActions>
+                    </Dialog>
+                </div>
                 <span className="forumPost__info">
                     submitted by {user} ({groupName}), {timestamp}
                 </span>

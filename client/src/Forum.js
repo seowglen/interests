@@ -44,6 +44,10 @@ const Forum = ({ setAuth }) => {
         setAuth(false);
     }
 
+    function removePost(post_id) {
+        setPostIds(postIds.filter(postId => postId !== post_id));
+    }
+
     async function getDetails() {
         try {
             const response = await fetch('http://localhost:5000/forum/get-details', {
@@ -177,7 +181,7 @@ const Forum = ({ setAuth }) => {
             </div>
             <div className="forumPost__group">
                 {postIds.map(uid => (
-                    <ForumPostPreview id={uid} />
+                    <ForumPostPreview id={uid} removePost={removePost}/>
                 ))}
             </div>
         </div>

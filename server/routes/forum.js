@@ -141,7 +141,7 @@ router.post('/get-forum-details', async (req, res) => {
         const payload = jwt.verify(jwtToken, process.env.jwtSecret);
 
         const post = await pool.query(
-            "SELECT time_stamp, view_count, forum_title FROM forum_posts WHERE forum_post_id = $1", [
+            "SELECT time_stamp, view_count, forum_title, user_id FROM forum_posts WHERE forum_post_id = $1", [
             req.body.id
         ]);
 
@@ -158,6 +158,12 @@ router.post('/get-forum-details', async (req, res) => {
         const comments = await pool.query("SELECT * FROM forum_comments WHERE forum_post_id = $1",[
             req.body.id    
         ]);
+
+        if (post.rows[0].user_id === payload.user) {
+            post.rows[0]['ownself'] = true;
+        } else {
+            post.rows[0]['ownself'] = false;
+        }
 
         post.rows[0]['group_name'] = group_name.rows[0].group_name;
 
@@ -327,6 +333,34 @@ router.post('/create-reply', async (req, res) => {
 
         const new_comment_id = comment_id.rows[0];
         res.json({ new_comment_id });
+
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json("Server Error");
+    }
+});
+
+router.post('/delete-post', async (req, res) => {
+    try {
+        const jwtToken = req.header("token");
+
+        if (!jwtToken) {
+            return res.status(403).json("Not Authorized");
+        }
+
+        const payload = jwt.verify(jwtToken, process.env.jwtSecret);
+
+        await pool.query(
+            "DELETE FROM forum_comments WHERE forum_post_id = ($1)",
+            [req.body.id]
+        )
+
+        const post_id = await pool.query(
+            "DELETE FROM forum_posts WHERE forum_post_id = ($1) RETURNING forum_post_id",
+            [req.body.id]
+        );
+
+        res.json(post_id.rows[0]);
 
     } catch (err) {
         console.error(err.message);
