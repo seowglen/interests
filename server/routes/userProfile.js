@@ -199,4 +199,36 @@ router.post('/send', async (req, res) => {
     }
 });
 
+router.post('/remove', async (req, res) => {
+    try {
+        const jwtToken = req.header("token");
+
+        if (!jwtToken) {
+            return res.status(403).json("Not Authorized");
+        }
+
+        const payload = jwt.verify(jwtToken, process.env.jwtSecret);
+
+        const user_id_from_profile = await pool.query("SELECT user_id FROM users WHERE profile_id = $1", [
+            req.body.id
+        ]);
+
+        await pool.query("DELETE FROM friends WHERE user_id = ($1) AND friend_id = ($2)", [
+            payload.user,
+            user_id_from_profile.rows[0].user_id
+        ]);
+
+        await pool.query("DELETE FROM friends WHERE user_id = ($1) AND friend_id = ($2)", [
+            user_id_from_profile.rows[0].user_id,
+            payload.user            
+        ]);
+
+        res.status(200).json("Rejected Friend Request");
+
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json("Server Error");
+    }
+});
+
 module.exports = router;

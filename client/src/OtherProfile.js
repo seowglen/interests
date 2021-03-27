@@ -197,6 +197,25 @@ const OtherProfile = (props) => {
     }
   }
 
+  async function removeFriend(data) {
+    try {
+      const response = await fetch("http://localhost:5000/userProfile/remove", {
+        method: "POST",
+        headers: {
+          token: localStorage.token,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: data }),
+      });
+
+      const parseRes = await response.json();
+      console.log(data);
+      setRequest(null);
+    } catch (err) {
+      console.error(err.message);
+    }
+  }
+
   function accept(id) {
     console.log(id);
     acceptRequest(id);
@@ -208,6 +227,10 @@ const OtherProfile = (props) => {
 
   function send(id) {
     sendRequest(id);
+  }
+
+  function remove(id) {
+    removeFriend(id);
   }
 
   useEffect(() => {
@@ -236,7 +259,7 @@ const OtherProfile = (props) => {
             </div>
           )}
           {!ownself && request === "sender" && <Button variant="contained" style={{backgroundColor: "#b3b3b3", color: "white"}}>⧗ REQUEST PENDING</Button>}
-          {!ownself && request === "accepted" && <Button variant="contained" style={{backgroundColor: "#ffa6a6", color: "white"}}>✓ FRIENDS</Button>}
+          {!ownself && request === "accepted" && <Button variant="contained" style={{backgroundColor: "#ffa6a6", color: "white"}} onClick={() => remove(userProfileID)}>X Remove Friend</Button>}
           {!ownself && request === null && (
             <Button variant="contained" style={{backgroundColor: "#E27B66", color: "white"}} onClick={() => send(userProfileID)}>
               ⮞ Send friend request
