@@ -58,6 +58,7 @@ const OtherProfile = (props) => {
   const [request, setRequest] = useState("");
   const [groupIDs, setGroupIDs] = useState([]);
   const [ownself, setOwnself] = useState(false);
+  const [mutualGroups, setMutualGroups] = useState(0);
 
   const logout = (e) => {
     e.preventDefault();
@@ -115,6 +116,7 @@ const OtherProfile = (props) => {
       setRequest(parseRes.friend_request);
       setGroupIDs(parseRes.group_ids);
       setOwnself(parseRes.ownself);
+      setMutualGroups(parseRes.number_groups);
       // setInfo(parseRes.profile_info);
     } catch (err) {
       console.error(err.message);
@@ -260,7 +262,7 @@ const OtherProfile = (props) => {
           )}
           {!ownself && request === "sender" && <Button variant="contained" style={{backgroundColor: "#b3b3b3", color: "white"}}>⧗ REQUEST PENDING</Button>}
           {!ownself && request === "accepted" && <Button variant="contained" style={{backgroundColor: "#ffa6a6", color: "white"}} onClick={() => remove(userProfileID)}>X Remove Friend</Button>}
-          {!ownself && request === null && (
+          {!ownself && request === null && mutualGroups !== 0 && (
             <Button variant="contained" style={{backgroundColor: "#E27B66", color: "white"}} onClick={() => send(userProfileID)}>
               ⮞ Send friend request
             </Button>

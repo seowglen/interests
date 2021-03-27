@@ -34,6 +34,14 @@ router.post('/get-details', async (req, res) => {
             profile.rows[0]['ownself'] = false;
         }
 
+        const groups = await pool.query(
+            "SELECT * FROM (SELECT group_id FROM user_group WHERE user_id = $1) AS A INNER JOIN (SELECT group_id FROM user_group WHERE user_id IN (SELECT user_id FROM users WHERE profile_id = $2)) AS B ON A.group_id = B.group_id", [
+            payload.user,
+            req.body.id
+        ]);
+
+        profile.rows[0]['number_groups'] = groups.rows.length;
+
         const group_id = await pool.query("SELECT group_id FROM user_group WHERE user_id IN (SELECT user_id FROM users WHERE profile_id = $1)", [
             req.body.id
         ]);
