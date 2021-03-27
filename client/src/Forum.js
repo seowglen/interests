@@ -13,9 +13,18 @@ import ForumPostPreview from './ForumPostPreview';
 import { Menu, MenuItem } from '@material-ui/core';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
+import { makeStyles } from '@material-ui/core/styles';
+
+const useStyles = makeStyles(theme => ({
+    root: {
+        paddingLeft: theme.spacing(14),
+        paddingRight: theme.spacing(14)
+    },
+}));
 
 const Forum = ({ setAuth }) => {
 
+    const classes = useStyles();
     const [name, setName] = useState('');
     const [picture, setPicture] = useState(null);
     const [title, setTitle] = useState('');
@@ -24,6 +33,7 @@ const Forum = ({ setAuth }) => {
     const [open, setOpen] = React.useState(false);
     const [groupNames, setGroupNames] = useState([]);
     const [category, setCategory] = useState('');
+    const [err, setErr] = useState(false);
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -35,7 +45,12 @@ const Forum = ({ setAuth }) => {
 
     const handleCreate = () => {
         setOpen(false);
-        createPost(title, post, category)
+        if (category == null) {
+            setErr(true)
+        } else {
+            createPost(title, post, category)
+            setErr(false)
+        }
     };
 
     const logout = (e) => {
@@ -125,6 +140,15 @@ const Forum = ({ setAuth }) => {
     return(
         <div style={{backgroundColor: '#FaFaFa'}}>
             <Header displayName={name} picture={picture} setAuth={setAuth} logout={logout} currentPage='forum'/>
+            {err ? 
+                <div className={classes.root}>
+                    <h3 style={{marginBottom: '0px', display: 'flex', justifyContent: 'center', backgroundColor: '#d75b60', color: 'white'}}>
+                        ERROR: Please join a group first!
+                    </h3>
+                </div> 
+                : 
+                    null
+            }
             <div className="createPost">
                 <Grid container justify="center">
                     <Button variant="contained" style={{backgroundColor: '#4A406C', color: "white"}} onClick={handleClickOpen}>
