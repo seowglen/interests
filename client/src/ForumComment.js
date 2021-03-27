@@ -34,6 +34,7 @@ const ForumComment = (props) => {
     const [reply, setReply] = useState("");
     const [numReplies, setNumReplies] = useState(0);
     const [ownself, setOwnself] = useState(false);
+    const [viewReplies, setViewReplies] = useState(false);
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -162,6 +163,16 @@ const ForumComment = (props) => {
         }
     }
 
+    function toggle() {
+        if (viewReplies) {
+            setViewReplies(false);
+            props.handleToggle(props.comment.forum_comment_id)
+        } else {
+            setViewReplies(true);
+            props.handleToggle(props.comment.forum_comment_id)
+        }
+    }
+
     useEffect(() => {
         getNameUser(props.comment.user_id);
         getPhotoUser(props.comment.user_id);
@@ -212,9 +223,14 @@ const ForumComment = (props) => {
                         <p style={ownself ? {cursor: "pointer", marginLeft: "30px"} : {cursor: "pointer"}} onClick={handleClickOpen}>
                             REPLY
                         </p>
-                        {numReplies > 0 &&
-                            <p style={{cursor: "pointer", marginLeft: "30px", color: "#E27B66"}} onClick={() => props.handleToggle(props.comment.forum_comment_id)}>
-                                {numReplies} {numReplies === 1 ? 'REPLY' : 'REPLIES'}
+                        {numReplies > 0 && viewReplies &&
+                            <p style={{cursor: "pointer", marginLeft: "30px", color: "#E27B66"}} onClick={toggle}>
+                                ⬆ HIDE {numReplies} {numReplies === 1 ? 'REPLY' : 'REPLIES'}
+                            </p>
+                        }
+                        {numReplies > 0 && !viewReplies &&
+                            <p style={{cursor: "pointer", marginLeft: "30px", color: "#E27B66"}} onClick={toggle}>
+                                ⬇ VIEW {numReplies} {numReplies === 1 ? 'REPLY' : 'REPLIES'}
                             </p>
                         }
                     </div>
