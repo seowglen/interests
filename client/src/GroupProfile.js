@@ -7,6 +7,12 @@ import { Button } from "@material-ui/core";
 import EditIcon from '@material-ui/icons/Edit';
 import IconButton from "@material-ui/core/IconButton";
 import ProfileCard from './ProfileCard';
+// import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -60,6 +66,20 @@ const OtherProfile = (props) => {
   const [groupJoined, setGroupJoined] = useState(null);
   const [profileIDs, setProfileIDs] = useState([]);
   const [admin, setAdmin] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
+
+  const handleClickOpenDelete = () => {
+      setOpenDelete(true);
+  }
+
+  const handleCloseDelete = () => {
+      setOpenDelete(false);
+  };
+
+  const handleDelete = () => {
+      leave(groupProfileID);
+      setOpenDelete(false);
+  }
 
   const logout = (e) => {
     e.preventDefault();
@@ -302,11 +322,27 @@ const OtherProfile = (props) => {
       <div className="profile">
         {!admin ? 
           groupJoined ? 
-            <Button variant="contained" style={{backgroundColor: "#E27B66", color: "white"}} onClick={() => leave(groupProfileID)}>X Leave Group</Button>
+            <Button variant="contained" style={{backgroundColor: "#E27B66", color: "white"}} onClick={handleClickOpenDelete}>X Leave Group</Button>
           :
             <Button variant="contained" style={{backgroundColor: "#ffa6a6", color: "white"}} onClick={() => join(groupProfileID)}>✓ Join Group</Button>
         : null
         }
+        <Dialog open={openDelete} onClose={handleCloseDelete} aria-labelledby="form-dialog-title" fullWidth maxWidth="sm">
+          <DialogTitle id="form-dialog-title">Are you sure you want to leave this group?</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              This will have dire consequences, deleting your posts, forum posts and your forum comments, likes and comments to your friends posts.
+            </DialogContentText>                            
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseDelete} color="primary">
+              Cancel
+            </Button>
+            <Button onClick={handleDelete} color="primary">
+              Leave
+            </Button>
+          </DialogActions>
+        </Dialog>
         <div className={classes.root}>
           {groupPicture ? (
             <Avatar src={groupPicture} className={classes.large} />
