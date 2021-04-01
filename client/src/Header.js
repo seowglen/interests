@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import "./Header.css";
 import img from './logo_navbar (font rasterized).png';
 import HomeIcon from '@material-ui/icons/Home';
@@ -10,11 +10,36 @@ import ForumIcon from '@material-ui/icons/Forum';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import GroupWorkIcon from '@material-ui/icons/GroupWork';
 import { Link } from 'react-router-dom';
+import { Badge } from '@material-ui/core';
+import NotificationsIcon from '@material-ui/icons/Notifications';
+import { makeStyles } from '@material-ui/core/styles';
+import Popover from '@material-ui/core/Popover';
+import Notifications from './Notifications';
 
+const useStyles = makeStyles(theme => ({
+    notifications: {
+        width: theme.spacing(3.2),
+        height: theme.spacing(3.2),
+        color: "gray"
+    },
+}));
 
 function Header(props) {
 
     // const [{ user }, dispatch] = useLoginValue();
+    const classes = useStyles();
+    const [anchorEl, setAnchorEl] = useState(null);
+
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const open = Boolean(anchorEl);
+    const id = open ? 'simple-popover' : undefined;
 
     return (
         <div className="header">
@@ -49,6 +74,37 @@ function Header(props) {
                 </div>               
             </div>
             <div className="header__right">
+                <div className="header__option" aria-describedby={id} onClick={handleClick}>
+                    <Badge
+                        anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'right',
+                        }}
+                        color="secondary"
+                        badgeContent={2}
+                    >
+                        <NotificationsIcon className={classes.notifications}/>
+                    </Badge>
+                </div>
+                <Popover
+                    id={id}
+                    open={open}
+                    anchorEl={anchorEl}
+                    onClose={handleClose}
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                    }}
+                    transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'left',
+                    }}
+                >
+                    <Notifications />
+                    <Notifications />
+                    <Notifications />
+                </Popover>
+
                 <Link to="/profile" style={{ textDecoration: 'none', color: 'black' }}>
                     <div className={"header__option" + (props.currentPage === 'profile' ? ' header__option--active' : '')}>
                         <Avatar src={props.picture}/>
