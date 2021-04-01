@@ -51,9 +51,9 @@ function App() {
         <Route exact path='/home'render={props => isAuthenticated ? <Home {...props} setAuth={setAuth}/> : <Redirect to='./login' />}/>
         <Route exact path='/profile' render={props => isAuthenticated ? <Profile {...props} setAuth={setAuth}/> : <Redirect to='./login'/>}/>
         <Route exact path='/friends' render={props => isAuthenticated ? <Friends {...props} setAuth={setAuth}/> : <Redirect to='./login'/>}/>
-        <Route exact path='/otherProfile' render={props => isAuthenticated ? <OtherProfile {...props} setAuth={setAuth}/> : <Redirect to='./login'/>}/>
+        <Route exact path='/otherProfile' render={props => !isAuthenticated ? <Redirect to='./login'/> : props.location.idProps !== undefined ? <OtherProfile {...props} setAuth={setAuth}/> : <Redirect to='./home' />}/>
         <Route exact path='/groups' render={props => isAuthenticated ? <Groups {...props} setAuth={setAuth}/> : <Redirect to='./login'/>}/>
-        <Route exact path='/groupProfile' render={props => isAuthenticated ? <GroupProfile {...props} setAuth={setAuth}/> : <Redirect to='./login'/>}/>
+        <Route exact path='/groupProfile' render={props => !isAuthenticated ? <Redirect to='./login'/> : props.location.idProps !== undefined ? <GroupProfile {...props} setAuth={setAuth}/> : <Redirect to='./home' />}/>
         <Route exact path='/chat' render={props => isAuthenticated ? <Chat {...props} setAuth={setAuth}/> : <Redirect to='./login'/>}/>
         <Route exact path='/forum' render={props => isAuthenticated ? <Forum {...props} setAuth={setAuth}/> : <Redirect to='./login'/>}/>
         <Route exact path='/forumPost' render={props => isAuthenticated ? <ForumPost {...props} setAuth={setAuth}/> : <Redirect to='./login'/>}/>
