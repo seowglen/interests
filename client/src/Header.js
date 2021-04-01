@@ -22,6 +22,13 @@ const useStyles = makeStyles(theme => ({
         height: theme.spacing(3.2),
         color: "gray"
     },
+    popHeight: {
+        maxHeight: "500px"
+    },
+    customBadge: {
+        backgroundColor: "#E27B66",
+        color: "white"
+    }
 }));
 
 function Header(props) {
@@ -82,6 +89,7 @@ function Header(props) {
                         }}
                         color="secondary"
                         badgeContent={2}
+                        classes={{ badge: classes.customBadge }}
                     >
                         <NotificationsIcon className={classes.notifications}/>
                     </Badge>
@@ -99,7 +107,14 @@ function Header(props) {
                         vertical: 'top',
                         horizontal: 'left',
                     }}
+                    className={classes.popHeight}
                 >
+                    <Notifications />
+                    <Notifications />
+                    <Notifications />
+                    <Notifications />
+                    <Notifications />
+                    <Notifications />
                     <Notifications />
                     <Notifications />
                     <Notifications />
