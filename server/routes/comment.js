@@ -91,6 +91,25 @@ router.post('/create-comment', async (req, res) => {
         ]);
         
         const new_comment_id = comment_id.rows[0];
+
+        const user_id_from_post = await pool.query(
+            "SELECT user_id FROM posts WHERE post_id = ($1)",
+            [
+                req.body.id
+            ]
+        )
+
+        await pool.query(
+            "INSERT INTO notifications (user_id, other_user_id, time_stamp, notification, seen) VALUES ($1, $2, to_timestamp($3), $4, $5)",
+            [
+                user_id_from_post.rows[0].user_id,
+                payload.user,
+                (Date.now() / 1000.0),
+                "has commented on your post.",
+                false
+            ]
+        );
+
         res.json({ new_comment_id });
 
     } catch (err) {

@@ -121,6 +121,17 @@ router.post('/reject', async (req, res) => {
             payload.user            
         ]);
 
+        await pool.query(
+            "INSERT INTO notifications (user_id, other_user_id, time_stamp, notification, seen) VALUES ($1, $2, to_timestamp($3), $4, $5)",
+            [
+                user_id_from_profile.rows[0].user_id,
+                payload.user,
+                (Date.now() / 1000.0),
+                "has rejected your Friend Request.",
+                false
+            ]
+        );
+
         res.status(200).json("Rejected Friend Request");
 
     } catch (err) {
@@ -165,6 +176,17 @@ router.post('/accept', async (req, res) => {
             "accepted"            
         ]);
 
+        await pool.query(
+            "INSERT INTO notifications (user_id, other_user_id, time_stamp, notification, seen) VALUES ($1, $2, to_timestamp($3), $4, $5)",
+            [
+                user_id_from_profile.rows[0].user_id,
+                payload.user,
+                (Date.now() / 1000.0),
+                "has accepted your Friend Request.",
+                false
+            ]
+        );
+
         res.status(200).json("Sent Friend Request");
 
     } catch (err) {
@@ -205,7 +227,7 @@ router.post('/send', async (req, res) => {
                 user_id_from_profile.rows[0].user_id,
                 payload.user,
                 (Date.now() / 1000.0),
-                "has sent you a friend request. You may accept or reject his/her friend request in the Friends page.",
+                "has sent you a Friend Request.",
                 false
             ]
         );
