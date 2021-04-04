@@ -9,6 +9,7 @@ const jwtGenerator = require('../utils/jwtGenerator');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const path = require('path');
+const { strict } = require("assert");
 
 router.post('/get-name', async (req, res) => {
     try {
@@ -150,22 +151,71 @@ router.post('/create-like', async (req, res) => {
         const new_like_id = like_id.rows[0];
 
         const user_id_from_post = await pool.query(
-            "SELECT user_id FROM posts WHERE post_id = ($1)",
+            "SELECT user_id, post FROM posts WHERE post_id = ($1)",
             [
                 req.body.id
             ]
         )
+        
+        var notification;
+        if (user_id_from_post.rows[0].post <= 30) {
+            notification = "has liked your post: " + user_id_from_post.rows[0].post;
+        } else {
+            notification = "has liked your post: " + user_id_from_post.rows[0].post.slice(0, 30) + '...';
+        }
 
-        await pool.query(
-            "INSERT INTO notifications (user_id, other_user_id, time_stamp, notification, seen) VALUES ($1, $2, to_timestamp($3), $4, $5)",
+        if (user_id_from_post.rows[0].user_id !== payload.user) {
+            await pool.query(
+                "INSERT INTO notifications (user_id, other_user_id, time_stamp, notification, seen) VALUES ($1, $2, to_timestamp($3), $4, $5)",
+                [
+                    user_id_from_post.rows[0].user_id,
+                    payload.user,
+                    (Date.now() / 1000.0),
+                    notification,
+                    false
+                ]
+            );
+        }
+
+        const user_likes = await pool.query(
+            "SELECT user_id FROM likes WHERE post_id = ($1) AND user_id != ($2) AND user_id != ($3)",
             [
+                req.body.id,
                 user_id_from_post.rows[0].user_id,
-                payload.user,
-                (Date.now() / 1000.0),
-                "has liked your post.",
-                false
+                payload.user
             ]
-        );
+        )
+        
+        if (user_likes !== undefined) {
+            const profile_name_from_user_id = await pool.query(
+                "SELECT profile_name FROM profile WHERE profile_id IN (SELECT profile_id FROM users WHERE user_id = ($1))",
+                [
+                    user_id_from_post.rows[0].user_id
+                ]
+            );
+
+            var notification_to_others;
+            if (user_id_from_post.rows[0].post <= 30) {
+                notification_to_others = "has also liked " + profile_name_from_user_id.rows[0].profile_name + "'s post: " + user_id_from_post.rows[0].post;
+            } else {
+                notification_to_others = "has also liked " + profile_name_from_user_id.rows[0].profile_name + "'s post: " + user_id_from_post.rows[0].post.slice(0, 30) + '...';
+            }
+
+            if (user_id_from_post.rows[0].user_id !== payload.user) {
+                for (var i=0; i<user_likes.rows.length; i++) {
+                    await pool.query(
+                        "INSERT INTO notifications (user_id, other_user_id, time_stamp, notification, seen) VALUES ($1, $2, to_timestamp($3), $4, $5)",
+                        [
+                            user_likes.rows[i].user_id,
+                            payload.user,
+                            (Date.now() / 1000.0),
+                            notification_to_others,
+                            false
+                        ]
+                    );
+                }
+            }
+        }
 
         res.json({ new_like_id });
 
