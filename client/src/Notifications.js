@@ -1,13 +1,16 @@
 import React from 'react';
-import { Avatar } from '@material-ui/core';
+import './Notifications.css';
+import Notification from './Notification';
 
-function Notifications() {
+function Notifications(props) {
+
     return(
-        <div style={{width: '350px', height: '100px'}}>
-            <Avatar />
-            <div>This is a notification.</div>
+        <div>
+            {props.notifications.map(notification => (
+                <Notification notification={notification} />
+            ))}
         </div>
     )
 }
 
-export default Notifications
+export default Notifications;

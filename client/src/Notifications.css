@@ -1,0 +1,31 @@
+.notifications {
+    width: 350px;
+    height: 75px;
+    padding-top: 5px;
+    display: flex;
+    align-items: center;
+    padding: 0px 5px;
+    border-bottom: 1px solid lightgray;
+}
+
+.notifications__unseen {
+    width: 350px;
+    height: 75px;
+    padding-top: 5px;
+    display: flex;
+    align-items: center;
+    padding: 0px 5px;
+    border-bottom: 1px solid lightgray;
+    background-color: #fffdf1;
+    font-weight: bold;
+}
+
+.notification {
+    height: 100%;
+    padding-left: 8px;
+}
+
+.message {
+    margin-top: 8px;
+    margin-bottom: 0px;
+}

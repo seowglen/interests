@@ -71,6 +71,10 @@ app.use('/chat', require('./routes/chat'));
 
 app.use('/forum', require('./routes/forum'));
 
+// notifications route
+
+app.use('/notifications', require('./routes/notifications'));
+
 // SOCKET.IO
 
 // const io = require('socket.io')(server,  {

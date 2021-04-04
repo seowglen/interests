@@ -199,6 +199,17 @@ router.post('/send', async (req, res) => {
             "receiver"            
         ]);
 
+        await pool.query(
+            "INSERT INTO notifications (user_id, other_user_id, time_stamp, notification, seen) VALUES ($1, $2, to_timestamp($3), $4, $5)",
+            [
+                user_id_from_profile.rows[0].user_id,
+                payload.user,
+                (Date.now() / 1000.0),
+                "has sent you a friend request. You may accept or reject his/her friend request in the Friends page.",
+                false
+            ]
+        );
+
         res.status(200).json("Sent Friend Request");
 
     } catch (err) {

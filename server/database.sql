@@ -187,3 +187,14 @@ CREATE TABLE user_group (
 	FOREIGN KEY (user_id) REFERENCES users (user_id),
 	FOREIGN KEY (group_id) REFERENCES groups (group_id)
 );
+
+CREATE TABLE notifications(
+	notification_id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+	user_id uuid NOT NULL,
+	other_user_id uuid NOT NULL,
+	time_stamp timestamp,
+	notification varchar(512),
+	seen boolean,
+	FOREIGN KEY (user_id) REFERENCES users (user_id),
+	FOREIGN KEY (other_user_id) REFERENCES users (user_id)
+)
