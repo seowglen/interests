@@ -251,6 +251,34 @@ router.post('/create-comment', async (req, res) => {
         ]);
 
         const new_comment_id = comment_id.rows[0];
+
+        const user_id_from_forum_post = await pool.query(
+            "SELECT user_id, forum_title FROM forum_posts WHERE forum_post_id = ($1)",
+            [
+                req.body.id
+            ]
+        );
+
+        var notification;
+        if (user_id_from_forum_post.rows[0].forum_title.length <= 30) {
+            notification = "has commented on your forum post: " + user_id_from_forum_post.rows[0].forum_title;
+        } else {
+            notification = "has commented on your forum post: " + user_id_from_forum_post.rows[0].forum_title.slice(0, 30) + '...';
+        }
+
+        if (user_id_from_forum_post.rows[0].user_id !== payload.user) {
+            await pool.query(
+                "INSERT INTO notifications (user_id, other_user_id, time_stamp, notification, seen) VALUES ($1, $2, to_timestamp($3), $4, $5)",
+                [
+                    user_id_from_forum_post.rows[0].user_id,
+                    payload.user,
+                    (Date.now() / 1000.0),
+                    notification,
+                    false
+                ]
+            );
+        }
+
         res.json({ new_comment_id });
 
     } catch (err) {
@@ -332,6 +360,41 @@ router.post('/create-reply', async (req, res) => {
         ]);
 
         const new_comment_id = comment_id.rows[0];
+
+        const forum_title_from_forum_post = await pool.query(
+            "SELECT forum_title FROM forum_posts WHERE forum_post_id = ($1)",
+            [
+                req.body.post_id
+            ]
+        );
+
+        var notification;
+        if (forum_title_from_forum_post.rows[0].forum_title.length <= 30) {
+            notification = "has replied to your comment on the forum post: " + forum_title_from_forum_post.rows[0].forum_title;
+        } else {
+            notification = "has replied to your comment on the forum post: " + forum_title_from_forum_post.rows[0].forum_title.slice(0, 30) + '...';
+        }
+
+        const user_id_from_forum_comment_id = await pool.query(
+            "SELECT user_id FROM forum_comments WHERE forum_comment_id = ($1)",
+            [
+                req.body.comment_id
+            ]
+        )
+
+        if (user_id_from_forum_comment_id.rows[0].user_id !== payload.user) {
+            await pool.query(
+                "INSERT INTO notifications (user_id, other_user_id, time_stamp, notification, seen) VALUES ($1, $2, to_timestamp($3), $4, $5)",
+                [
+                    user_id_from_forum_comment_id.rows[0].user_id,
+                    payload.user,
+                    (Date.now() / 1000.0),
+                    notification,
+                    false
+                ]
+            );
+        }
+
         res.json({ new_comment_id });
 
     } catch (err) {
