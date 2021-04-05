@@ -93,22 +93,92 @@ router.post('/create-comment', async (req, res) => {
         const new_comment_id = comment_id.rows[0];
 
         const user_id_from_post = await pool.query(
-            "SELECT user_id FROM posts WHERE post_id = ($1)",
+            "SELECT user_id, post FROM posts WHERE post_id = ($1)",
             [
                 req.body.id
             ]
         )
+        
+        var notification;
+        if (user_id_from_post.rows[0].post.length <= 30) {
+            notification = "has commented on your post: " + user_id_from_post.rows[0].post;
+        } else {
+            notification = "has commented on your post: " + user_id_from_post.rows[0].post.slice(0, 30) + '...';
+        }
 
-        await pool.query(
-            "INSERT INTO notifications (user_id, other_user_id, time_stamp, notification, seen) VALUES ($1, $2, to_timestamp($3), $4, $5)",
+        if (user_id_from_post.rows[0].user_id !== payload.user) {
+            await pool.query(
+                "INSERT INTO notifications (user_id, other_user_id, time_stamp, notification, seen) VALUES ($1, $2, to_timestamp($3), $4, $5)",
+                [
+                    user_id_from_post.rows[0].user_id,
+                    payload.user,
+                    (Date.now() / 1000.0),
+                    notification,
+                    false
+                ]
+            );
+        }
+
+        const user_comments = await pool.query(
+            "SELECT DISTINCT user_id FROM comments WHERE post_id = ($1) AND user_id != ($2) AND user_id != ($3)",
             [
+                req.body.id,
                 user_id_from_post.rows[0].user_id,
-                payload.user,
-                (Date.now() / 1000.0),
-                "has commented on your post.",
-                false
+                payload.user
             ]
         );
+
+        if (user_comments !== undefined) {
+
+            const profile_name_from_user_id = await pool.query(
+                "SELECT profile_name FROM profile WHERE profile_id IN (SELECT profile_id FROM users WHERE user_id = ($1))",
+                [
+                    user_id_from_post.rows[0].user_id
+                ]
+            );
+
+            var notification_to_others;
+            if (user_id_from_post.rows[0].post.length <= 30) {
+                notification_to_others = "has also commented on " + profile_name_from_user_id.rows[0].profile_name + "'s post: " + user_id_from_post.rows[0].post;
+            } else {
+                notification_to_others = "has also commented on " + profile_name_from_user_id.rows[0].profile_name + "'s post: " + user_id_from_post.rows[0].post.slice(0, 30) + '...';
+            }
+
+            var notification_from_self;
+            if (user_id_from_post.rows[0].post.length <= 30) {
+                notification_from_self = "has commented on his own post: " + user_id_from_post.rows[0].post;
+            } else {
+                notification_from_self = "has commented on his own post: " + user_id_from_post.rows[0].post.slice(0, 30) + '...';
+            }
+
+            if (user_id_from_post.rows[0].user_id !== payload.user) {
+                for (var i=0; i<user_comments.rows.length; i++) {
+                    await pool.query(
+                        "INSERT INTO notifications (user_id, other_user_id, time_stamp, notification, seen) VALUES ($1, $2, to_timestamp($3), $4, $5)",
+                        [
+                            user_comments.rows[i].user_id,
+                            payload.user,
+                            (Date.now() / 1000.0),
+                            notification_to_others,
+                            false
+                        ]
+                    );
+                }
+            } else {
+                for (var i=0; i<user_comments.rows.length; i++) {
+                    await pool.query(
+                        "INSERT INTO notifications (user_id, other_user_id, time_stamp, notification, seen) VALUES ($1, $2, to_timestamp($3), $4, $5)",
+                        [
+                            user_comments.rows[i].user_id,
+                            payload.user,
+                            (Date.now() / 1000.0),
+                            notification_from_self,
+                            false
+                        ]
+                    );
+                }
+            }
+        }
 
         res.json({ new_comment_id });
 

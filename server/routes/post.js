@@ -158,7 +158,7 @@ router.post('/create-like', async (req, res) => {
         )
         
         var notification;
-        if (user_id_from_post.rows[0].post <= 30) {
+        if (user_id_from_post.rows[0].post.length <= 30) {
             notification = "has liked your post: " + user_id_from_post.rows[0].post;
         } else {
             notification = "has liked your post: " + user_id_from_post.rows[0].post.slice(0, 30) + '...';
@@ -195,7 +195,7 @@ router.post('/create-like', async (req, res) => {
             );
 
             var notification_to_others;
-            if (user_id_from_post.rows[0].post <= 30) {
+            if (user_id_from_post.rows[0].post.length <= 30) {
                 notification_to_others = "has also liked " + profile_name_from_user_id.rows[0].profile_name + "'s post: " + user_id_from_post.rows[0].post;
             } else {
                 notification_to_others = "has also liked " + profile_name_from_user_id.rows[0].profile_name + "'s post: " + user_id_from_post.rows[0].post.slice(0, 30) + '...';
