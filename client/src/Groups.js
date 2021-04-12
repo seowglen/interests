@@ -51,6 +51,9 @@ const Groups = ({ setAuth }) => {
     const [errorInput, setErrorInput] = useState(0);
     const [toggleList, setToggleList] = useState(false);
     const [toggleConsider, setToggleConsider] = useState(false);
+    const [filterGroupID, setFilterGroupID] = useState([]);
+    const [filterOtherGroupID, setFilterOtherGroupID] = useState([]);
+    const [search, setSearch] = useState("");
 
     const logout = (e) => {
         e.preventDefault();
@@ -126,7 +129,7 @@ const Groups = ({ setAuth }) => {
                 setNewGroupName("");
                 setNewGroupInfo("");
             } else {
-                setGroupID([parseRes.group_id, ...groupID]);
+                setGroupID([parseRes, ...groupID]);
                 setErrorInput(0);
                 setCreateGroup(0);
                 setNewGroupName("");
@@ -135,6 +138,9 @@ const Groups = ({ setAuth }) => {
                     setToggleConsider(false);
                     setToggleList(true);
                 }
+                setSearch("");
+                setFilterGroupID([]);
+                setFilterOtherGroupID([]);
             }
         } catch (err) {
             console.error(err.message);
@@ -172,6 +178,13 @@ const Groups = ({ setAuth }) => {
     function handleConsider() {
         setToggleList(false);
         setToggleConsider(true);
+    }
+
+    function handleSearch(e) {
+        // console.log(e.target.value)
+        setSearch(e.target.value.toLowerCase())
+        setFilterGroupID(groupID.filter(group => group.group_name.toLowerCase().includes(e.target.value.toLowerCase())))
+        setFilterOtherGroupID(otherGroupID.filter(group => group.group_name.toLowerCase().includes(e.target.value.toLowerCase())))
     }
 
     useEffect(() => {
@@ -258,21 +271,33 @@ const Groups = ({ setAuth }) => {
 
             <div className="groups__bar__options">
                 <Button variant="contained" className={(toggleList ? classes.active : '')} onClick={() => handleList()}>
-                    Groups List ({groupID.length})
+                    Groups List ({filterGroupID.length !== 0 ? filterGroupID.length : search.length === 0 ? groupID.length : 0})
                 </Button>
                 <Button variant="contained" className={(toggleConsider ? classes.active : '')} onClick={() => handleConsider()}>
-                    Groups To Consider ({otherGroupID.length})
+                    Groups To Consider ({filterOtherGroupID.length !== 0 ? filterOtherGroupID.length : search.length === 0 ? otherGroupID.length : 0})
                 </Button>
             </div>
 
+            <div className="groups__bar" style={{paddingTop: '0px'}}>
+                <input style={{width: "200px", height: "30px"}} placeholder="Search for a user here" value={search} onChange={(e) => handleSearch(e)}></input>
+            </div>
             
             {toggleList ? 
                 <div className={classes.root}>
                     {/* <Typography variant="h5">My Friends:</Typography> */}
                     <Grid container spacing={3}>
-                        {groupID.map(uid => (
-                            <GroupCard id={uid}/>
-                        ))}
+                        {filterGroupID.length !== 0 ?
+                            filterGroupID.map(uid => (
+                                <GroupCard id={uid.group_id}/>
+                            ))
+                        :
+                            search.length === 0 ?
+                                groupID.map(uid => (
+                                    <GroupCard id={uid.group_id}/>
+                                ))
+                            :
+                                null
+                        }
                     </Grid>
                 </div>
             : null
@@ -282,9 +307,18 @@ const Groups = ({ setAuth }) => {
                 <div className={classes.root}>
                     {/* <Typography variant="h5">Friends To Consider:</Typography> */}
                     <Grid container spacing={3}>
-                        {otherGroupID.map(uid => (
-                            <GroupCard id={uid}/>
-                        ))}
+                        {filterOtherGroupID.length !== 0 ?
+                            filterOtherGroupID.map(uid => (
+                                <GroupCard id={uid.group_id}/>
+                            ))
+                        :
+                            search.length === 0 ?
+                                otherGroupID.map(uid => (
+                                    <GroupCard id={uid.group_id}/>
+                                ))
+                            :
+                                null
+                        }
                     </Grid>
                 </div>
             : null

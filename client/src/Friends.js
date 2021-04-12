@@ -131,13 +131,13 @@ const Friends = ({ setAuth }) => {
             {/* <h1>This is the Friends Page</h1> */}
             <div className="friends__bar">
                 <Button variant="contained" className={(toggleRequest ? classes.active : '')} onClick={() => handleRequests()}>
-                    Friend Requests ({filterRequestProfileID ? filterRequestProfileID.length : search.length === 0 ? requestProfileID.length : 0})
+                    Friend Requests ({filterRequestProfileID.length !== 0 ? filterRequestProfileID.length : search.length === 0 ? requestProfileID.length : 0})
                 </Button>
                 <Button variant="contained" className={(toggleList ? classes.active : '')} onClick={() => handleList()}>
-                    Friends List ({filterProfileID ? filterProfileID.length : search.length === 0 ? profileID.length : 0})
+                    Friends List ({filterProfileID.length !== 0 ? filterProfileID.length : search.length === 0 ? profileID.length : 0})
                 </Button>
                 <Button variant="contained" className={(toggleConsider ? classes.active : '')} onClick={() => handleConsider()}>
-                    Friends To Consider ({filterOtherProfileID ? filterOtherProfileID.length : search.length === 0 ? otherProfileID.length : 0})
+                    Friends To Consider ({filterOtherProfileID.length !== 0 ? filterOtherProfileID.length : search.length === 0 ? otherProfileID.length : 0})
                 </Button>
             </div>
 
@@ -150,7 +150,7 @@ const Friends = ({ setAuth }) => {
                     {/* <Typography variant="h5">Friend Requests:</Typography> */}
                     <Grid container spacing={3}>
                         {filterRequestProfileID.length !== 0 ?
-                            requestProfileID.map(uid => (
+                            filterRequestProfileID.map(uid => (
                                 <ProfileCard id={uid.profile_id}/>
                             ))
                         :

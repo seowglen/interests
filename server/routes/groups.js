@@ -16,21 +16,21 @@ router.get('/', authorization, async (req, res) => {
         const user_groups = [];
         const all_groups = [];
 
-        const groups_with_user = await pool.query("SELECT group_id FROM user_group WHERE user_id = $1", [
+        const groups_with_user = await pool.query("SELECT group_id, group_name FROM groups WHERE group_id IN (SELECT group_id FROM user_group WHERE user_id = $1)", [
             req.user
         ]);
 
         for (var i = 0; i < groups_with_user.rows.length; i++) {
-            user_groups.push(groups_with_user.rows[i].group_id)
+            user_groups.push(groups_with_user.rows[i])
         }
 
-        const groups = await pool.query("SELECT group_id FROM groups");
+        const groups = await pool.query("SELECT group_id, group_name FROM groups");
 
         for (var i = 0; i < groups.rows.length; i++) {
-            all_groups.push(groups.rows[i].group_id);
+            all_groups.push(groups.rows[i]);
         }
 
-        const groups_to_consider = all_groups.filter(x => !user_groups.includes(x));
+        const groups_to_consider = all_groups.filter(x => !user_groups.find(({group_id}) => x.group_id === group_id));
 
         res.json({ user_groups, groups_to_consider});
 
@@ -94,7 +94,7 @@ router.post('/postName', async (req, res) => {
             var err = "Group already exists";
             return res.json({err: err});
         } else {
-            const group_id = await pool.query("INSERT INTO groups (group_name, group_info, administrator) VALUES ($1, $2, $3) RETURNING group_id", [
+            const group_id = await pool.query("INSERT INTO groups (group_name, group_info, administrator) VALUES ($1, $2, $3) RETURNING group_id, group_name", [
                 req.body.name,
                 req.body.info,
                 payload.user
