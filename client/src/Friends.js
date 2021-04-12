@@ -28,6 +28,10 @@ const Friends = ({ setAuth }) => {
 
     const classes = useStyles();
     const [profileID, setProfileID] = useState([]);
+    const [filterProfileID, setFilterProfileID] = useState([]);
+    const [filterOtherProfileID, setFilterOtherProfileID] = useState([]);
+    const [filterRequestProfileID, setFilterRequestProfileID] = useState([]);
+    const [search, setSearch] = useState("");
     const [otherProfileID, setOtherProfileID] = useState([]);
     const [requestProfileID, setRequestProfileID] = useState([]);
     const [name, setName] = useState("");
@@ -35,6 +39,7 @@ const Friends = ({ setAuth }) => {
     const [toggleRequest, setToggleRequest] = useState(false);
     const [toggleList, setToggleList] = useState(false);
     const [toggleConsider, setToggleConsider] = useState(false);
+
 
     const logout = (e) => {
         e.preventDefault();
@@ -80,7 +85,7 @@ const Friends = ({ setAuth }) => {
             const parseRes = await response.json();
             setProfileID(parseRes.friends_profile_id);
             setOtherProfileID(parseRes.friends_to_consider);
-            setRequestProfileID(parseRes.friends_requests);            
+            setRequestProfileID(parseRes.friends_requests);          
             // setPicture(parseRes.profile_picture);
         } catch (err) {
             console.error(err.message);
@@ -105,6 +110,14 @@ const Friends = ({ setAuth }) => {
         setToggleConsider(true);
     }
 
+    function handleSearch(e) {
+        // console.log(e.target.value)
+        setSearch(e.target.value.toLowerCase())
+        setFilterProfileID(profileID.filter(profile => profile.profile_name.toLowerCase().includes(e.target.value.toLowerCase())))
+        setFilterOtherProfileID(otherProfileID.filter(profile => profile.profile_name.toLowerCase().includes(e.target.value.toLowerCase())))
+        setFilterRequestProfileID(requestProfileID.filter(profile => profile.profile_name.toLowerCase().includes(e.target.value.toLowerCase())))
+    }
+
     useEffect(() => {
         getDetails();
         getPhoto();
@@ -118,29 +131,36 @@ const Friends = ({ setAuth }) => {
             {/* <h1>This is the Friends Page</h1> */}
             <div className="friends__bar">
                 <Button variant="contained" className={(toggleRequest ? classes.active : '')} onClick={() => handleRequests()}>
-                    Friend Requests ({requestProfileID.length})
+                    Friend Requests ({filterRequestProfileID ? filterRequestProfileID.length : search.length === 0 ? requestProfileID.length : 0})
                 </Button>
                 <Button variant="contained" className={(toggleList ? classes.active : '')} onClick={() => handleList()}>
-                    Friends List ({profileID.length})
+                    Friends List ({filterProfileID ? filterProfileID.length : search.length === 0 ? profileID.length : 0})
                 </Button>
                 <Button variant="contained" className={(toggleConsider ? classes.active : '')} onClick={() => handleConsider()}>
-                    Friends To Consider ({otherProfileID.length})
+                    Friends To Consider ({filterOtherProfileID ? filterOtherProfileID.length : search.length === 0 ? otherProfileID.length : 0})
                 </Button>
             </div>
 
-            {/* <div className="groups__bar" style={{paddingTop: '0px'}}>
-                <textarea placeholder="Search for a friend here">
-
-                </textarea>
-            </div> */}
+            <div className="groups__bar" style={{paddingTop: '0px'}}>
+                <input style={{width: "200px", height: "30px"}} placeholder="Search for a user here" value={search} onChange={(e) => handleSearch(e)}></input>
+            </div>
 
             {toggleRequest ? 
                 <div className={classes.root}>
                     {/* <Typography variant="h5">Friend Requests:</Typography> */}
                     <Grid container spacing={3}>
-                        {requestProfileID.map(uid => (
-                            <ProfileCard id={uid}/>
-                        ))}
+                        {filterRequestProfileID.length !== 0 ?
+                            requestProfileID.map(uid => (
+                                <ProfileCard id={uid.profile_id}/>
+                            ))
+                        :
+                            search.length === 0 ?
+                                requestProfileID.map(uid => (
+                                    <ProfileCard id={uid.profile_id}/>
+                                ))
+                            :
+                                null
+                        }
                     </Grid>
                 </div>
             : null
@@ -150,9 +170,18 @@ const Friends = ({ setAuth }) => {
                 <div className={classes.root}>
                     {/* <Typography variant="h5">My Friends:</Typography> */}
                     <Grid container spacing={3}>
-                        {profileID.map(uid => (
-                            <ProfileCard id={uid}/>
-                        ))}
+                        {filterProfileID.length !== 0 ? 
+                            filterProfileID.map(uid => (
+                                <ProfileCard id={uid.profile_id}/>
+                            ))
+                        :
+                            search.length === 0 ?
+                                profileID.map(uid => (
+                                    <ProfileCard id={uid.profile_id}/>
+                                ))
+                            :
+                                null
+                        }
                     </Grid>
                 </div>
             : 
@@ -163,9 +192,18 @@ const Friends = ({ setAuth }) => {
                 <div className={classes.root}>
                     {/* <Typography variant="h5">Friends To Consider:</Typography> */}
                     <Grid container spacing={3}>
-                        {otherProfileID.map(uid => (
-                            <ProfileCard id={uid}/>
-                        ))}
+                        {filterOtherProfileID.length !== 0 ? 
+                            filterOtherProfileID.map(uid => (
+                                <ProfileCard id={uid.profile_id}/>
+                            ))
+                        :
+                            search.length === 0 ?
+                                otherProfileID.map(uid => (
+                                    <ProfileCard id={uid.profile_id}/>
+                                ))
+                            :
+                                null
+                        }
                     </Grid>
                 </div>
             : null
