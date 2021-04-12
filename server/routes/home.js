@@ -52,8 +52,12 @@ router.get('/get-photo', authorization, async (req, res) => {
             user.rows[0].profile_id
         ]);
 
-        const path_name = '.' + profile.rows[0].profile_picture;
-        res.sendFile(path.join(__dirname, path_name));
+        if (profile.rows[0].profile_picture) {
+            const path_name = '.' + profile.rows[0].profile_picture;
+            res.sendFile(path.join(__dirname, path_name));
+        } else {
+            res.status(403).json("Picture not found.")
+        }
 
     } catch (err) {
         console.error(err.message);

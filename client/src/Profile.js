@@ -61,9 +61,14 @@ const Profile = ({ setAuth }) => {
             });
             
             const parseRes = await response.json();
-            setName(parseRes.profile_name);
-            // setPicture(parseRes.profile_picture);
-            setInfo(parseRes.profile_info);
+            if (response.ok) {
+                setName(parseRes.profile_name);
+                // setPicture(parseRes.profile_picture);
+                setInfo(parseRes.profile_info);
+            } else {
+                localStorage.removeItem("token");
+                setAuth(false);
+            }
         } catch (err) {
             console.error(err.message);
         }
@@ -75,9 +80,18 @@ const Profile = ({ setAuth }) => {
                 method: "GET",
                 headers: {token: localStorage.token}
             }).then(response => {
-                response.blob().then(blobResponse => {
-                    setPicture(URL.createObjectURL(blobResponse));
-                });
+                if (response.ok) {
+                    response.blob().then(blobResponse => {
+                        setPicture(URL.createObjectURL(blobResponse));
+                    });
+                } else {
+                    if (response.status === 403) {
+                        setPicture(null);
+                    } else {
+                        localStorage.removeItem("token");
+                        setAuth(false);
+                    }
+                }
             });
         } catch (err) {
             console.error(err.message);
@@ -127,6 +141,10 @@ const Profile = ({ setAuth }) => {
                 body: data 
             });
             const parseRes = await response.json();
+            if (!response.ok) {
+                localStorage.removeItem("token");
+                setAuth(false);
+            }
         } catch (err) {
             console.error(err.message);
         }
@@ -155,6 +173,10 @@ const Profile = ({ setAuth }) => {
                 body: JSON.stringify({ name: data })
             });
             const parseRes = await response.json();
+            if (!response.ok) {
+                localStorage.removeItem("token");
+                setAuth(false);
+            }
         } catch (err) {
             console.error(err.message);
         }
@@ -183,6 +205,10 @@ const Profile = ({ setAuth }) => {
                 body: JSON.stringify({ info: data })
             });
             const parseRes = await response.json();
+            if (!response.ok) {
+                localStorage.removeItem("token");
+                setAuth(false);
+            }
         } catch (err) {
             console.error(err.message);
         }

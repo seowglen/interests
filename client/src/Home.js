@@ -22,17 +22,20 @@ const Home = ({ setAuth }) => {
             });
             
             const parseRes = await response.json();
-
-            if (parseRes[1].profile_name === null) {
-                setName(parseRes[0].user_name);
+            if (response.ok) {
+                if (parseRes[1].profile_name === null) {
+                    setName(parseRes[0].user_name);
+                }
+                else {
+                    setName(parseRes[1].profile_name);
+                }
+    
+                setGroupNames(parseRes[2].group_names);
+                setCategory(parseRes[2].group_names[0]);
+            } else {
+                localStorage.removeItem("token");
+                setAuth(false);
             }
-            else {
-                setName(parseRes[1].profile_name);
-            }
-
-            setGroupNames(parseRes[2].group_names);
-            setCategory(parseRes[2].group_names[0]);
-
         } catch (err) {
             console.error(err.message);
         }
@@ -46,7 +49,12 @@ const Home = ({ setAuth }) => {
             });
             
             const parseRes = await response.json();
-            setPostIDs(parseRes.arr);
+            if (response.ok) {
+                setPostIDs(parseRes.arr);
+            } else {
+                localStorage.removeItem("token");
+                setAuth(false);
+            }
 
         } catch (err) {
             console.error(err.message);
@@ -59,9 +67,18 @@ const Home = ({ setAuth }) => {
                 method: "GET",
                 headers: {token: localStorage.token}
             }).then(response => {
-                response.blob().then(blobResponse => {
-                    setPicture(URL.createObjectURL(blobResponse));
-                });
+                if (response.ok) {
+                    response.blob().then(blobResponse => {
+                        setPicture(URL.createObjectURL(blobResponse));
+                    });
+                } else {
+                    if (response.status === 403) {
+                        setPicture(null);
+                    } else {
+                        localStorage.removeItem("token");
+                        setAuth(false);
+                    }
+                }
             });
         } catch (err) {
             console.error(err.message);
@@ -82,7 +99,12 @@ const Home = ({ setAuth }) => {
                 })
             });
             const parseRes = await response.json();
-            setPostIDs([parseRes.new_post_id.post_id, ...postIDs])
+            if (response.ok) {
+                setPostIDs([parseRes.new_post_id.post_id, ...postIDs])
+            } else {
+                localStorage.removeItem("token");
+                setAuth(false);
+            }
         } catch (err) {
             console.error(err.message);
         }

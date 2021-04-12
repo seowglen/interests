@@ -38,8 +38,12 @@ router.get('/get-photo', authorization, async (req, res) => {
             user.rows[0].profile_id
         ]);
 
-        const path_name = '.' + profile.rows[0].profile_picture;
-        res.sendFile(path.join(__dirname, path_name));
+        if (profile.rows[0].profile_picture) {
+            const path_name = '.' + profile.rows[0].profile_picture;
+            res.sendFile(path.join(__dirname, path_name));
+        } else {
+            res.status(403).json("Picture not found.")
+        }
 
     } catch (err) {
         console.error(err.message);
@@ -57,6 +61,16 @@ router.post('/upload-image', upload.single('file'), async (req, res) => {
         }
 
         const payload = jwt.verify(jwtToken, process.env.jwtSecret);
+
+        const profile_picture = await pool.query(
+            "SELECT profile_picture FROM profile WHERE profile_id IN (SELECT profile_id FROM users WHERE user_id = ($1))",
+            [payload.user]
+        );
+
+        if (profile_picture.rows[0].profile_picture) {
+            const path_name = '.' + profile_picture.rows[0].profile_picture;
+            fs.unlink(path.join(__dirname, path_name), () => console.log('file deleted'));
+        }
 
         let fileType = req.file.mimetype.split("/")[1];
         let newFileName = './photos/' + req.file.filename + "." + fileType;

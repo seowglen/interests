@@ -57,6 +57,7 @@ export default function Register({ setAuth }) {
     password: "",
     name: ""
   });
+  const [err, setErr] = useState("");
 
   const {email, password, name} = inputs;
 
@@ -77,9 +78,12 @@ export default function Register({ setAuth }) {
         });
 
         const parseRes = await response.json();
-
-        localStorage.setItem("token", parseRes.token)
-        setAuth(true);
+        if (response.ok) {
+          localStorage.setItem("token", parseRes.token)
+          setAuth(true);
+        } else {
+          setErr(parseRes);
+        }
     } catch (err) {
         console.error(err.message)
     }
@@ -93,6 +97,13 @@ export default function Register({ setAuth }) {
         <Typography component="h1" variant="h5">
           Register
         </Typography>
+        {err &&
+          <div>
+            <h3 style={{marginBottom: '0px', display: 'flex', justifyContent: 'center', backgroundColor: '#d75b60', color: 'white'}}>
+              ERROR: {err}    
+            </h3>
+          </div> 
+        }
         <form className="register__form" noValidate onSubmit={onSubmitForm}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
