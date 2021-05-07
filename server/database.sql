@@ -123,11 +123,10 @@ CREATE TABLE friends (
 CREATE TABLE posts (
 	post_id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
 	user_id uuid NOT NULL,
-	group_id uuid NOT NULL,
+	group_name varchar(255),
 	time_stamp timestamp,
 	post varchar(3071),
 	FOREIGN KEY (user_id) REFERENCES users (user_id),
-	FOREIGN KEY (group_id) REFERENCES groups (group_id)
 );
 
 CREATE TABLE forum_posts (

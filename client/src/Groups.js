@@ -279,7 +279,7 @@ const Groups = ({ setAuth }) => {
             </div>
 
             <div className="groups__bar" style={{paddingTop: '0px'}}>
-                <input style={{width: "200px", height: "30px"}} placeholder="Search for a user here" value={search} onChange={(e) => handleSearch(e)}></input>
+                <input style={{width: "200px", height: "30px"}} placeholder="Search for a group here" value={search} onChange={(e) => handleSearch(e)}></input>
             </div>
             
             {toggleList ? 
