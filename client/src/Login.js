@@ -141,7 +141,7 @@ export default function Login({ setAuth }) {
           >
             Sign In
           </Button>
-          <Grid container>
+          <Grid container style={{justifyContent: "space-between"}}>
             {/* <Grid item xs>
               <Link href="#" variant="body2">
                 Forgot password?
@@ -149,7 +149,12 @@ export default function Login({ setAuth }) {
             </Grid> */}
             <Grid item>
               <Link href="/register" variant="body2">
-                {"Don't have an account? Register here"}
+                {"Register here"}
+              </Link>
+            </Grid>
+            <Grid item>
+              <Link href="https://drive.google.com/file/d/100jKlhO0P7Tii9c41ND81MRfdDZ4MNnE/view?usp=sharing" target="_blank" variant="body2">
+                {"New here? Click me"}
               </Link>
             </Grid>
           </Grid>

@@ -15,6 +15,7 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import { makeStyles } from '@material-ui/core/styles';
 import Popover from '@material-ui/core/Popover';
 import Notifications from './Notifications';
+import HelpIcon from '@material-ui/icons/Help';
 
 const useStyles = makeStyles(theme => ({
     notifications: {
@@ -100,6 +101,11 @@ function Header(props) {
         <div className="header">
             <div className="header__left">
                 <img src={img} alt=""></img>
+                <a href="https://drive.google.com/file/d/100jKlhO0P7Tii9c41ND81MRfdDZ4MNnE/view?usp=sharing" target="_blank" style={{ textDecoration: 'none', color: 'gray' }}>
+                    <div className={"header__option"} style={{height: "100%"}}>
+                        <HelpIcon />                    
+                    </div> 
+                </a> 
             </div>
             <div className="header__middle">
                 <Link to='/home' style={{ textDecoration: 'none', color: 'gray' }}>

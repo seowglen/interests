@@ -21,6 +21,7 @@ CREATE TABLE friends (
 	_id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
 	user_id uuid NOT NULL,
 	friend_id uuid NOT NULL,
+	request varchar(255),
 	FOREIGN KEY (user_id) REFERENCES users (user_id),
 	FOREIGN KEY (friend_id) REFERENCES users (user_id)
 );
@@ -116,6 +117,7 @@ CREATE TABLE friends (
 	_id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
 	user_id uuid NOT NULL,
 	friend_id uuid NOT NULL,
+	request varchar(255),
 	FOREIGN KEY (user_id) REFERENCES users (user_id),
 	FOREIGN KEY (friend_id) REFERENCES users (user_id)
 );
@@ -126,7 +128,7 @@ CREATE TABLE posts (
 	group_name varchar(255),
 	time_stamp timestamp,
 	post varchar(3071),
-	FOREIGN KEY (user_id) REFERENCES users (user_id),
+	FOREIGN KEY (user_id) REFERENCES users (user_id)
 );
 
 CREATE TABLE forum_posts (
